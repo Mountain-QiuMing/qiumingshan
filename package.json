@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "scripts": {
+    "nest": "nest",
+    "next": "cd src/client && next --port=3002",
+    "build": "NODE_ENV=production nest build && cd src/client && next build",
+    "start": "nest",
+    "start:dev": "nest start --watch --preserveWatchOutput",
+    "start:debug": "nest start --debug --watch --preserveWatchOutput",
+    "start:prod": "NODE_ENV=production node dist/src/server/main",
+    "type-check": "tsc"
+  },
+  "dependencies": {
+    "@nestjs/common": "^8.4.6",
+    "@nestjs/config": "^2.1.0",
+    "@nestjs/core": "^8.4.6",
+    "@nestjs/passport": "^8.2.1",
+    "@nestjs/platform-express": "^8.4.6",
+    "express": "^4.18.1",
+    "next": "latest",
+    "passport": "^0.6.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.5.5",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.21",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "typescript": "4.0"
+  }
+}
