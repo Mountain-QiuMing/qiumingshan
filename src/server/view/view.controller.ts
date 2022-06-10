@@ -11,12 +11,8 @@ export class ViewController {
 
   async handler(req: Request, res: Response) {
     const parsedUrl = parse(req.url, true);
-    await this.viewService
-      .getNextServer()
-      .render(req, res, parsedUrl.pathname, parsedUrl.query);
+    await this.viewService.getNextServer().render(req, res, parsedUrl.pathname, parsedUrl.query);
   }
-
- 
 
   // @UseGuards(JwtAuthGuard)
   @Get('profile')
@@ -33,9 +29,7 @@ export class ViewController {
   @Get('_next*')
   public async assets(@Req() req: Request, @Res() res: Response) {
     const parsedUrl = parse(req.url, true);
-    await this.viewService
-      .getNextServer()
-      .render(req, res, parsedUrl.pathname, parsedUrl.query);
+    await this.viewService.getNextServer().render(req, res, parsedUrl.pathname, parsedUrl.query);
   }
 
   @Get('*')
@@ -45,11 +39,6 @@ export class ViewController {
 
     await this.viewService
       .getNextServer()
-      .render(
-        req,
-        res,
-        parsedUrl.pathname,
-        Object.assign(parsedUrl.query, serverSideProps),
-      );
+      .render(req, res, parsedUrl.pathname, Object.assign(parsedUrl.query, serverSideProps));
   }
 }

@@ -3,12 +3,15 @@
   "scripts": {
     "nest": "nest",
     "next": "cd src/client && next --port=3002",
+    "prebuild": "rimraf dist",
     "build": "NODE_ENV=production nest build && cd src/client && next build",
-    "start": "nest",
+    "start": "nest start",
     "start:dev": "nest start --watch --preserveWatchOutput",
     "start:debug": "nest start --debug --watch --preserveWatchOutput",
-    "start:prod": "NODE_ENV=production node dist/src/server/main",
-    "type-check": "tsc"
+    "start:prod": "NODE_ENV=production node dist/main",
+    "type-check": "tsc",
+    "lint": "eslint \"{src,test}/**/*.{js,ts,tsx}\" --fix",
+    "format": "prettier --write \"src/**/*.{js,ts,tsx}\""
   },
   "dependencies": {
     "@nestjs/common": "^8.4.6",
@@ -19,17 +22,30 @@
     "axios": "^0.27.2",
     "express": "^4.18.1",
     "next": "latest",
-    "passport": "^0.6.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "passport": "^0.5.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.5",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
+    "@emotion/react": "^11.9.0",
+    "@nestjs/cli": "^8.0.0",
     "@types/node": "^12.12.21",
-    "@types/react": "^17.0.2",
-    "@types/react-dom": "^17.0.1",
-    "typescript": "4.0"
+    "@types/react": "^18.0.12",
+    "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.18.2"
   }
 }

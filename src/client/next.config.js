@@ -1,4 +1,7 @@
+/** @type{import('next').NextConfig} */
 module.exports = {
   distDir: '../../.next',
-  emotion: true
+  experimental: {
+    emotion: true,
+  },
 };

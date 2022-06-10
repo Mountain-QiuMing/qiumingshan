@@ -7,9 +7,12 @@ import { PostModule } from './modules/post/post.module';
 import { PostService } from './modules/post/post.service';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true
-  }), PostModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    PostModule,
+  ],
   controllers: [AppController, PostController],
   providers: [AppService, PostService],
 })

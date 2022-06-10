@@ -1,5 +1,3 @@
-
-   
 import { Controller, Request, Get, UseGuards } from '@nestjs/common';
 
 import { AppService } from './app.service';
