@@ -1,13 +1,13 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import { Axios, AxiosRequestConfig } from 'axios';
 import { BASE_URL } from '../config/constanst';
 
-const axiosInstance = axios.create({
+const axiosInstance = new Axios({
   timeout: 6000,
+  baseURL: BASE_URL,
 });
 
 axiosInstance.interceptors.request.use(
   config => {
-    config.baseURL = BASE_URL;
     return config;
   },
   error => {
