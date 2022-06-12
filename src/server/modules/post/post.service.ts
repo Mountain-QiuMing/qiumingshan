@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PostEntity } from './post.entity';
 
-const POSTS = [{
+const POSTS = [
+  {
     title: 'First Post!',
     slug: 'first-post',
     content: [
@@ -15,12 +19,14 @@ const POSTS = [{
       'Nulla sed purus ullamcorper, volutpat leo ac, blandit sem. Aenean efficitur ante rhoncus, lobortis est nec, consequat nisl. Fusce quis semper ligula, eget commodo magna. In tincidunt nisl sed dui ornare, nec pulvinar nibh laoreet. Suspendisse lobortis elit at nunc egestas fermentum. Etiam leo dui, fermentum ac nulla et, hendrerit varius arcu. Quisque porttitor congue mattis. Mauris non lorem suscipit turpis dictum porttitor. Nullam eget blandit felis. Duis eu erat ac mauris egestas placerat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
       'Etiam vel tellus sollicitudin, laoreet quam id, dignissim eros. Suspendisse dapibus tempor magna eget eleifend. Morbi molestie arcu id sagittis tristique. Suspendisse luctus id velit et elementum. Cras gravida sodales quam vel iaculis. Cras aliquet ex a placerat tincidunt. Fusce at ligula urna. Pellentesque id sapien lacus. Nullam eleifend ultrices tortor a hendrerit. Vivamus cursus leo eget tortor porttitor finibus. Quisque at quam gravida, aliquam orci ut, volutpat enim. Vivamus sit amet lobortis lacus. In aliquet consectetur diam vitae lacinia. Suspendisse ultrices malesuada turpis ac congue. Pellentesque vestibulum, nulla nec mollis euismod, sapien ipsum lobortis tortor, nec pellentesque sem nulla gravida diam.',
     ],
-}];
+  },
+];
 
 @Injectable()
 export class PostService {
-  public all() {
-    return POSTS;
+  constructor(@InjectRepository(PostEntity) private readonly postRepository: Repository<PostEntity>) {}
+  public getAllPosts() {
+    return this.postRepository.find();
   }
 
   public find(slug: string) {

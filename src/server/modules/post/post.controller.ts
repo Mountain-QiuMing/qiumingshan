@@ -3,16 +3,16 @@ import { PostService } from './post.service';
 
 @Controller('post')
 export class PostController {
-  constructor(private service: PostService) {}
+  constructor(private readonly postService: PostService) {}
 
   @Get()
-  public index() {
-    return { posts: this.service.all() };
+  public async index() {
+    return await this.postService.getAllPosts();
   }
 
   @Get(':id')
-  public get(@Param('id') slug: string) {
-    const post = this.service.find(slug);
+  public async get(@Param('id') slug: string) {
+    const post = await this.postService.find(slug);
 
     if (post === null) {
       throw new NotFoundException();

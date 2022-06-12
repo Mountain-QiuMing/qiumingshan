@@ -1,7 +1,7 @@
-import { Controller, Get, Res, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Res, Req } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { parse } from 'url';
-import { JwtAuthGuard } from '../core/guard/jtw.guard';
+// import { JwtAuthGuard } from '../core/guard/jtw.guard';
 
 import { ViewService } from './view.service';
 
@@ -36,8 +36,6 @@ export class ViewController {
   public async showHome(@Req() req: Request, @Res() res: Response) {
     const parsedUrl = parse(req.url, true);
 
-    await this.viewService
-      .getNextServer()
-      .render(req, res, parsedUrl.pathname, parsedUrl.query);
+    await this.viewService.getNextServer().render(req, res, parsedUrl.pathname, parsedUrl.query);
   }
 }

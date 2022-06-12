@@ -3,7 +3,7 @@ import { BASE_URL } from '../config/constanst';
 
 const axiosInstance = axios.create({
   timeout: 12000,
-  baseURL: BASE_URL
+  baseURL: BASE_URL,
 });
 
 axiosInstance.interceptors.request.use(
@@ -65,7 +65,7 @@ export const request = <T = any>(
   config?: AxiosRequestConfig,
 ): MyResponse<T> => {
   // const prefix = '/api'
-  const prefix = ''
+  const prefix = '';
 
   url = prefix + url;
   if (method === 'get') {

@@ -1,10 +1,8 @@
-import axios from 'axios';
 import { GetStaticProps } from 'next';
 import { request } from '../api';
 import Layout from '../components/Layout';
 
 const IndexPage = props => {
-  console.log(props);
   return (
     <Layout title="Home | Next.js + TypeScript Example">
       <h1>Posts</h1>
@@ -21,8 +19,8 @@ const IndexPage = props => {
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res: any = await request('get', '/post');
-  return { props: { posts: res.posts } };
+  const res = await request('get', '/post');
+  return { props: { posts: res.result } };
 };
 
 export default IndexPage;
