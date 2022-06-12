@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-const POSTS = {
-  'first-post': {
+const POSTS = [{
     title: 'First Post!',
     slug: 'first-post',
     content: [
@@ -9,23 +8,22 @@ const POSTS = {
       'Ut sed dolor odio. Mauris cursus aliquet tortor, a posuere mi elementum in. Morbi sed efficitur mauris. Donec sed nulla efficitur, finibus massa ut, aliquet elit. Praesent eu mattis velit. Fusce sodales tincidunt mi, ut placerat turpis lobortis eu. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam at scelerisque lacus, ut commodo leo. Morbi vitae iaculis arcu. Donec finibus erat sed tristique feugiat. Morbi lorem tellus, elementum et facilisis eu, egestas fringilla eros. In quis arcu aliquam, ornare nulla malesuada, convallis massa. Donec tellus neque, tempor eu porttitor at, malesuada eget tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque vel pellentesque elit. Morbi semper purus velit, a pulvinar eros blandit vel.',
     ],
   },
-  'second-post': {
+  {
     title: 'Second Post!',
     slug: 'second-post',
     content: [
       'Nulla sed purus ullamcorper, volutpat leo ac, blandit sem. Aenean efficitur ante rhoncus, lobortis est nec, consequat nisl. Fusce quis semper ligula, eget commodo magna. In tincidunt nisl sed dui ornare, nec pulvinar nibh laoreet. Suspendisse lobortis elit at nunc egestas fermentum. Etiam leo dui, fermentum ac nulla et, hendrerit varius arcu. Quisque porttitor congue mattis. Mauris non lorem suscipit turpis dictum porttitor. Nullam eget blandit felis. Duis eu erat ac mauris egestas placerat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
       'Etiam vel tellus sollicitudin, laoreet quam id, dignissim eros. Suspendisse dapibus tempor magna eget eleifend. Morbi molestie arcu id sagittis tristique. Suspendisse luctus id velit et elementum. Cras gravida sodales quam vel iaculis. Cras aliquet ex a placerat tincidunt. Fusce at ligula urna. Pellentesque id sapien lacus. Nullam eleifend ultrices tortor a hendrerit. Vivamus cursus leo eget tortor porttitor finibus. Quisque at quam gravida, aliquam orci ut, volutpat enim. Vivamus sit amet lobortis lacus. In aliquet consectetur diam vitae lacinia. Suspendisse ultrices malesuada turpis ac congue. Pellentesque vestibulum, nulla nec mollis euismod, sapien ipsum lobortis tortor, nec pellentesque sem nulla gravida diam.',
     ],
-  },
-};
+}];
 
 @Injectable()
 export class PostService {
   public all() {
-    return Object.values(POSTS);
+    return POSTS;
   }
 
   public find(slug: string) {
-    return POSTS[slug] || null;
+    return POSTS.find(item => item.slug === slug);
   }
 }

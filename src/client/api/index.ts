@@ -1,9 +1,9 @@
-import { Axios, AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { BASE_URL } from '../config/constanst';
 
-const axiosInstance = new Axios({
-  timeout: 6000,
-  baseURL: BASE_URL,
+const axiosInstance = axios.create({
+  timeout: 12000,
+  baseURL: BASE_URL
 });
 
 axiosInstance.interceptors.request.use(
@@ -20,7 +20,7 @@ axiosInstance.interceptors.response.use(
     if (config?.data?.message) {
     }
 
-    return config?.data;
+    return config.data;
   },
   error => {
     // history.replace('/login');
@@ -65,7 +65,7 @@ export const request = <T = any>(
   config?: AxiosRequestConfig,
 ): MyResponse<T> => {
   // const prefix = '/api'
-  const prefix = '';
+  const prefix = ''
 
   url = prefix + url;
   if (method === 'get') {
