@@ -1,43 +1,46 @@
-# TypeScript Next.js example
+# Micro Light
 
-This is a really simple project that shows the usage of Next.js with TypeScript.
+## 开发
+### 依赖
+- node
+- npm 
+- nest cli
+    ```bash
+      npm i -g @nestjs/cli
+    ```
+- mysql8.0
+  
+    - 账号：`root`
+    - 密码：`123456`
+    - 初始数据库：`web_c`
 
-## Deploy your own
+    mysql设置 `root` 初始密码 
+    ```mysql
+    mysqladmin -uroot password 123456
+    ```
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-typescript)
+### 启动
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-typescript&project-name=with-typescript&repository-name=with-typescript)
-
-## How to use it?
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+#### 安装 node 依赖插件
 
 ```bash
-npx create-next-app --example with-typescript with-typescript-app
-# or
-yarn create next-app --example with-typescript with-typescript-app
-# or
-pnpm create next-app --example with-typescript with-typescript-app
+yarn
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+#### 运行开发环境
 
-## Notes
-
-This example shows how to integrate the TypeScript type system into Next.js. Since TypeScript is supported out of the box with Next.js, all we have to do is to install TypeScript.
-
-```
-npm install --save-dev typescript
+```bash
+yarn start:dev
 ```
 
-To enable TypeScript's features, we install the type declarations for React and Node.
-
+### 构建
+打包命令
+```bash
+yarn build
 ```
-npm install --save-dev @types/react @types/react-dom @types/node
+
+### 部署
+运行生产环境
+```bash
+yarn start:prod
 ```
-
-When we run `next dev` the next time, Next.js will start looking for any `.ts` or `.tsx` files in our project and builds it. It even automatically creates a `tsconfig.json` file for our project with the recommended settings.
-
-Next.js has built-in TypeScript declarations, so we'll get autocompletion for Next.js' modules straight away.
-
-A `type-check` script is also added to `package.json`, which runs TypeScript's `tsc` CLI in `noEmit` mode to run type-checking separately. You can then include this, for example, in your `test` scripts.
