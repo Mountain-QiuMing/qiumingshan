@@ -20,7 +20,7 @@ const IndexPage = props => {
 
 export const getStaticProps: GetStaticProps = async () => {
   const res = await request('get', '/post');
-  return { props: { posts: res.result } };
+  return { props: { posts: res.result || [] } };
 };
 
 export default IndexPage;
