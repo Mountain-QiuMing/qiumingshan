@@ -1,8 +1,7 @@
 import ListItem from './ListItem';
-import { User } from '../../../interfaces';
 
 type Props = {
-  items: User[];
+  items: any[];
 };
 
 const List = ({ items }: Props) => (

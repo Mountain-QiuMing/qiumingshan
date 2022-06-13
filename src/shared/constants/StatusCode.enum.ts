@@ -1,6 +1,7 @@
 export enum StatusCode {
   /** 系统繁忙 */
   TIMEOUT = -1,
+
   /** 成功 */
   SUCCESS = 0,
 

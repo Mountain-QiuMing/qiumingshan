@@ -1,9 +1,7 @@
 import Link from 'next/link';
 
-import { User } from '../../../interfaces';
-
 type Props = {
-  data: User;
+  data: any;
 };
 
 const ListItem = ({ data }: Props) => (
