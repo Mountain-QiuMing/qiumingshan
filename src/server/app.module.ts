@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PostController } from './modules/post/post.controller';
 import { PostModule } from './modules/post/post.module';
-import { UserController } from './modules/user/user.controller';
 import { UserModule } from './modules/user/user.module';
-import { join } from 'path';
 import { PostEntity } from './modules/post/post.entity';
 import { UserEntity } from './modules/user/user.entity';
+import { AuthService } from './modules/auth/auth.service';
+import { AuthController } from './modules/auth/auth.controller';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,10 +18,10 @@ import { UserEntity } from './modules/user/user.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: '47.101.33.221',
       port: 3306,
-      username: 'root',
-      password: '123456',
+      username: 'admin',
+      password: 'Admin1230.',
       database: 'web_c',
       entities: [PostEntity, UserEntity],
       autoLoadEntities: true,
@@ -31,8 +31,9 @@ import { UserEntity } from './modules/user/user.entity';
     }),
     PostModule,
     UserModule,
+    AuthModule,
   ],
-  controllers: [AppController, PostController, UserController],
-  providers: [AppService],
+  controllers: [AppController, AuthController],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}
