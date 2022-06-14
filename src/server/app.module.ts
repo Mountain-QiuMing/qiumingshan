@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthService } from './modules/auth/auth.service';
-import { AuthController } from './modules/auth/auth.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostEntity } from './modules/post/post.entity';
@@ -39,7 +38,7 @@ import { UserEntity } from './modules/user/user.entity';
     UserModule,
     AuthModule,
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController],
   providers: [AppService, AuthService],
 })
 export class AppModule {}
