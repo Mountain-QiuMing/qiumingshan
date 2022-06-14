@@ -24,5 +24,10 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   await app.listen(3002);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();

@@ -614,6 +614,11 @@
   resolved "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.2.tgz#1a62f89525723dde24ba1b01b092bf5df8ad4d39"
   integrity sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==
 
+"@types/webpack-env@^1.17.0":
+  version "1.17.0"
+  resolved "https://registry.npmjs.org/@types/webpack-env/-/webpack-env-1.17.0.tgz#f99ce359f1bfd87da90cc4a57cab0a18f34a48d0"
+  integrity sha512-eHSaNYEyxRA5IAG0Ym/yCyf86niZUIF/TpWKofQI/CVfh5HsMEUyfE2kwFxha4ow0s5g0LfISQxpDKjbRDrizw==
+
 "@typescript-eslint/eslint-plugin@^5.27.1":
   version "5.27.1"
   resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.27.1.tgz#fdf59c905354139046b41b3ed95d1609913d0758"
@@ -3315,6 +3320,11 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
+run-script-webpack-plugin@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.npmjs.org/run-script-webpack-plugin/-/run-script-webpack-plugin-0.0.14.tgz#fe2362b32c1dab7a8af7a6f1246fc043690cedd7"
+  integrity sha512-DXe6lzzEVXjBr/74zd4m4yOfmz5P6GMjzhQxDDsViOmwG7cap8UCE6RgD5rT7zf4wM83a+ToHnpB3v4efUv5IA==
+
 rxjs@6.6.7, rxjs@^6.6.0:
   version "6.6.7"
   resolved "https://registry.npmjs.org/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
@@ -3935,7 +3945,7 @@ webidl-conversions@^3.0.0:
   resolved "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
   integrity sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=
 
-webpack-node-externals@3.0.0:
+webpack-node-externals@3.0.0, webpack-node-externals@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/webpack-node-externals/-/webpack-node-externals-3.0.0.tgz#1a3407c158d547a9feb4229a9e3385b7b60c9917"
   integrity sha512-LnL6Z3GGDPht/AigwRh2dvL9PQPFQ8skEpVrWZXLWBYmqcaojHNN0onvHzie6rq7EWKrrBfPYqNEzTJgiwEQDQ==
@@ -3949,6 +3959,36 @@ webpack@5.72.1:
   version "5.72.1"
   resolved "https://registry.npmjs.org/webpack/-/webpack-5.72.1.tgz#3500fc834b4e9ba573b9f430b2c0a61e1bb57d13"
   integrity sha512-dXG5zXCLspQR4krZVR6QgajnZOjW2K/djHvdcRaDQvsjV9z9vaW6+ja5dZOYbqBBjF6kGXka/2ZyxNdc+8Jung==
+  dependencies:
+    "@types/eslint-scope" "^3.7.3"
+    "@types/estree" "^0.0.51"
+    "@webassemblyjs/ast" "1.11.1"
+    "@webassemblyjs/wasm-edit" "1.11.1"
+    "@webassemblyjs/wasm-parser" "1.11.1"
+    acorn "^8.4.1"
+    acorn-import-assertions "^1.7.6"
+    browserslist "^4.14.5"
+    chrome-trace-event "^1.0.2"
+    enhanced-resolve "^5.9.3"
+    es-module-lexer "^0.9.0"
+    eslint-scope "5.1.1"
+    events "^3.2.0"
+    glob-to-regexp "^0.4.1"
+    graceful-fs "^4.2.9"
+    json-parse-even-better-errors "^2.3.1"
+    loader-runner "^4.2.0"
+    mime-types "^2.1.27"
+    neo-async "^2.6.2"
+    schema-utils "^3.1.0"
+    tapable "^2.1.1"
+    terser-webpack-plugin "^5.1.3"
+    watchpack "^2.3.1"
+    webpack-sources "^3.2.3"
+
+webpack@^5.73.0:
+  version "5.73.0"
+  resolved "https://registry.npmjs.org/webpack/-/webpack-5.73.0.tgz#bbd17738f8a53ee5760ea2f59dce7f3431d35d38"
+  integrity sha512-svjudQRPPa0YiOYa2lM/Gacw0r6PvxptHj4FuEKQ2kX05ZLkjbVc5MnPs6its5j7IZljnIqSVo/OsY2X0IpHGA==
   dependencies:
     "@types/eslint-scope" "^3.7.3"
     "@types/estree" "^0.0.51"
