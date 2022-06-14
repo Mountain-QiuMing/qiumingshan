@@ -40,8 +40,8 @@ export class UserEntity {
   @Column({ comment: '邮箱是否验证', type: 'boolean', default: false })
   public verified: boolean;
 
-  @Column({ comment: '邮箱验证随机数', length: 8 })
-  public randString: string;
+  // @Column({ comment: '邮箱验证随机数', length: 8 })
+  // public randString: string;
 
   @Column({ comment: ' 上次登录时间', default: null })
   public lastLoginTime?: Date;

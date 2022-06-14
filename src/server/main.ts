@@ -4,6 +4,7 @@ import { ServerModule } from './server.module';
 import { TransformInterceptor } from './core/intercepter/transform.intercepter';
 import { HttpExceptionFilter } from './core/filter/http-exception.filter';
 import { ValidationPipe } from './core/pipe/validation.pipe';
+import { AllExceptionsFilter } from './core/exception/all.exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerModule);
@@ -20,6 +21,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   await app.listen(3002);
 }
