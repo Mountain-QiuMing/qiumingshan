@@ -4,7 +4,7 @@
 
 ### env 环境变量文件
 
-在根目录下创建 .env 配置文件，文件内容前往 [config-center](https://github.com/Mountain-QiuMing/config-center/blob/master/micro-light.env) 获取
+在根目录下创建 `.env` 配置文件，文件内容前往 [config-center](https://github.com/Mountain-QiuMing/config-center/blob/master/micro-light.env) 获取
 
 ### 依赖
 
