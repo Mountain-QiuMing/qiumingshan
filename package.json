@@ -6,7 +6,7 @@
     "prebuild": "rimraf dist",
     "build": "NODE_ENV=production nest build && cd src/client && next build",
     "start": "nest start",
-    "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch",
+    "start:dev": "webpack --config webpack.config.js --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/server/main",
     "type-check": "tsc",
@@ -43,6 +43,7 @@
   "devDependencies": {
     "@emotion/react": "^11.9.0",
     "@nestjs/cli": "^8.0.0",
+    "@swc/core": "^1.2.198",
     "@types/bcrypt": "^5.0.0",
     "@types/node": "^12.12.21",
     "@types/react": "^18.0.12",
@@ -56,9 +57,11 @@
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "run-script-webpack-plugin": "^0.0.14",
+    "swc-loader": "^0.2.3",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.3",
     "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
     "webpack-node-externals": "^3.0.0"
   },
   "peerDependencies": {
