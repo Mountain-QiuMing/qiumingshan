@@ -6,7 +6,7 @@
     "prebuild": "rimraf dist",
     "build": "NODE_ENV=production nest build && cd src/client && next build",
     "start": "nest start",
-    "start:dev": "webpack --config webpack.config.js --watch",
+    "start:dev": "webpack --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/server/main",
     "type-check": "tsc",
