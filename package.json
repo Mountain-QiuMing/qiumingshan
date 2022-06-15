@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@emotion/react": "^11.9.0",
-    "@nestjs/cli": "^8.0.0",
+    "@nestjs/cli": "^8.2.6",
     "@swc/core": "^1.2.198",
     "@types/bcrypt": "^5.0.0",
     "@types/node": "^12.12.21",
@@ -54,6 +54,7 @@
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.11",
     "prettier": "^2.6.2",
     "rimraf": "^3.0.2",
     "run-script-webpack-plugin": "^0.0.14",
