@@ -18,5 +18,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/server", "src/shared", "webpack.config.js"]
+  "include": ["src/server", "src/shared", "webpack-hmr.config.js"]
 }
