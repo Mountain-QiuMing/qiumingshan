@@ -16,6 +16,6 @@
     "incremental": true,
     "baseUrl": "./"
   },
-  "include": ["next-env.d.ts", "next.config.js", "api", "components", "config", "pages", "../shared"],
+  "include": ["next-env.d.ts", "next.config.js", "api", "components", "config", "pages", "style", "../shared"],
   "exclude": ["node_modules"]
 }

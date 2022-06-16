@@ -1,18 +1,18 @@
-import { useTheme, Switch, changeTheme } from '@nextui-org/react';
+import { Switch, useTheme } from '@nextui-org/react';
+import { useTheme as useNextTheme } from 'next-themes';
+import { SunLineIcon, MoonLineIcon } from 'ultra-icon';
 
 export default () => {
-  const { type, isDark } = useTheme();
-
-  const handleChange = () => {
-    const nextTheme = isDark ? 'light' : 'dark';
-    window.localStorage.setItem('data-theme', nextTheme); // you can use any storage
-    changeTheme(nextTheme);
-  };
+  const { setTheme } = useNextTheme();
+  const { isDark } = useTheme();
 
   return (
     <div>
-      The current theme is: {type}
-      <Switch checked={isDark} onChange={handleChange} />
+      <Switch
+        checked={isDark}
+        onChange={e => setTheme(e.target.checked ? 'dark' : 'light')}
+        icon={isDark ? <MoonLineIcon /> : <SunLineIcon />}
+      />
     </div>
   );
 };
