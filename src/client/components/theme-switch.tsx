@@ -1,8 +1,9 @@
 import { css } from '@emotion/react';
 import { useColorMode } from '@chakra-ui/react';
 import { SunLineIcon, MoonLineIcon } from 'ultra-icon';
+import { FC } from 'react';
 
-export default () => {
+const ThemeSwitch: FC = () => {
   const { toggleColorMode, colorMode } = useColorMode();
   return (
     <span onClick={toggleColorMode} css={themeSwitchStyle}>
@@ -10,6 +11,8 @@ export default () => {
     </span>
   );
 };
+
+export default ThemeSwitch;
 
 const themeSwitchStyle = css`
   cursor: pointer;
