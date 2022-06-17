@@ -1,6 +1,7 @@
 import React from 'react';
+import { ColorModeScript } from '@chakra-ui/react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { CssBaseline } from '@nextui-org/react';
+import { colorModeConfig } from '../utils/color-mode';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -14,8 +15,9 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
-        <Head>{CssBaseline.flush()}</Head>
+        <Head />
         <body>
+          <ColorModeScript initialColorMode={colorModeConfig.initialColorMode} />
           <Main />
           <NextScript />
         </body>
