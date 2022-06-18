@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { BASE_URL } from '../config/constanst';
+import { toast } from '../utils/toast';
 
 const axiosInstance = axios.create({
   timeout: 12000,
@@ -18,6 +19,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   config => {
     if (config?.data?.message) {
+      console.log(config.data);
+      toast.warning(config.data.message);
     }
 
     return config.data;
@@ -32,6 +35,7 @@ axiosInstance.interceptors.response.use(
       errorMessage = error?.message;
     }
     console.dir(error);
+    toast.error(errorMessage);
     error.message && console.error(errorMessage);
 
     return {
@@ -44,6 +48,7 @@ axiosInstance.interceptors.response.use(
 
 export type Response<T = any> = {
   status: boolean;
+  code: number;
   message: string;
   result: T;
 };
@@ -76,4 +81,9 @@ export const request = <T = any>(
   } else {
     return axiosInstance[method](url, data, config);
   }
+};
+
+export const fetcher = {
+  get: (url: string) => request('get', url),
+  post: (url: string) => request('post', url),
 };
