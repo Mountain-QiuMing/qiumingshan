@@ -4,6 +4,7 @@ import { STORAGE_KEY } from '@chakra-ui/react';
 export const colorModeConfig = {
   initialColorMode: 'light',
   useSystemColorMode: true,
+  cssVarPrefix: 'ck',
 } as const;
 
 export const ensureColorMode = ctx => {
