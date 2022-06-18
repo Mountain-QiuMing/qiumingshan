@@ -14,8 +14,12 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "shared/*": ["../shared/*"],
+      "@/*": ["./*"]
+    }
   },
-  "include": ["*.d.ts", "next.config.js", "api", "components", "config", "pages", "style", "utils", "../shared"],
+  "include": ["**/*.ts", "**/*.tsx", "next.config.js", "../shared"],
   "exclude": ["node_modules"]
 }
