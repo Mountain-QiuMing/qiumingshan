@@ -2,14 +2,13 @@ import { useForm } from 'react-hook-form';
 import { FormErrorMessage, Input, Button, FormControl, Text, Link } from '@chakra-ui/react';
 import ThemeSwitch from '../components/theme-switch';
 import { css } from '@emotion/react';
-import { Register } from 'shared/interface/user/register.interface';
 import Bg from 'assets/images/bg.webp';
-import { apiRegister } from '../api/user/register.api';
+import { apiLogin } from '../api/user/login.api';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
+import { Login } from 'shared/interface/user/login.interface';
 
-const defaultValues: Register = {
-  email: '123456',
+const defaultValues: Login = {
   username: '123456',
   password: '123456',
 };
@@ -20,10 +19,10 @@ export default () => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-  } = useForm<Register>({ defaultValues: defaultValues });
+  } = useForm({ defaultValues: defaultValues });
 
   const onSubmit = handleSubmit(async value => {
-    const res = await apiRegister(value);
+    const res = await apiLogin(value);
     if (res.status) {
       router.replace('/');
     }
@@ -38,16 +37,6 @@ export default () => {
         <Text fontSize="4xl" align="center">
           微光
         </Text>
-        <FormControl mt={6} isInvalid={!!errors.email}>
-          <Input
-            id="email"
-            placeholder="邮箱"
-            {...register('email', {
-              required: '请输入邮箱',
-            })}
-          />
-          <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
-        </FormControl>
         <FormControl mt={4} isInvalid={!!errors.username}>
           <Input
             id="username"
@@ -71,11 +60,11 @@ export default () => {
           <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
         </FormControl>
         <Button mt={6} type="button" isLoading={isSubmitting} onClick={onSubmit} width="100%">
-          注册
+          登录
         </Button>
         <div style={{ marginTop: 20, textAlign: 'center' }}>
-          <Link as={NextLink} href="/login">
-            已有账号？去登录
+          <Link as={NextLink} href="/register">
+            去注册
           </Link>
         </div>
       </form>

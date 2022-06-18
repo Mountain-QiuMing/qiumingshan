@@ -12,12 +12,14 @@ export class TransformInterceptor implements NestInterceptor {
         if (typeof result === 'string') {
           return {
             code: StatusEnum.SUCCESS,
+            status: true,
             message: result,
           };
         }
 
         return {
           code: StatusEnum.SUCCESS,
+          status: true,
           result,
         };
       }),
