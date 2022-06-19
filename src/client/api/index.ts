@@ -69,8 +69,7 @@ export const request = <T = any>(
   data?: any,
   config?: AxiosRequestConfig,
 ): MyResponse<T> => {
-  // const prefix = '/api'
-  const prefix = '';
+  const prefix = '/api';
 
   url = prefix + url;
   if (method === 'get') {

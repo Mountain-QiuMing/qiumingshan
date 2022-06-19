@@ -15,7 +15,9 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
-        <Head />
+        <Head>
+          <link rel="shortcut icon" href="/_next/image?url=%2Ffavicon.ico&w=96&q=75" />
+        </Head>
         <body>
           <ColorModeScript initialColorMode={colorModeConfig.initialColorMode} />
           <Main />
