@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
     if (error?.message?.includes('Network Error')) {
       errorMessage = '网络错误，请检查您的网络';
     } else {
-      errorMessage = error.response.data?.message;
+      errorMessage = error.message || error.response.data?.message;
     }
     console.dir(error);
     toast.error(errorMessage);
