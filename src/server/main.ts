@@ -10,8 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(ServerModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Micro Light')
-    .setDescription('Micro Light 接口文档')
+    .setTitle('秋名山')
+    .setDescription('秋名山 接口文档')
     .setVersion('1.0')
     .addTag('1.0.0')
     .build();

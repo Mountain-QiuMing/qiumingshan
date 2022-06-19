@@ -36,7 +36,7 @@ export default () => {
       </header>
       <form>
         <Text fontSize="4xl" align="center">
-          微光
+          秋名山
         </Text>
         <FormControl mt={6} isInvalid={!!errors.email}>
           <Input
