@@ -5,17 +5,14 @@ import { UserService } from '../user/user.service';
 import { ApiException } from '../../core/exception/api.exception';
 import { StatusEnum } from '../..//core/constants/status';
 import { LoginDto } from './dto/login.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class HttpStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly userService: UserService) {
+  constructor(private readonly userService: UserService, private readonly configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        req => {
-          return req.cookies.accessToken;
-        },
-      ]),
-      secretOrKey: 'qHqPHVPasjfHDCrcX7Ao7x5O5W098RU3i6lloVgWZFY=',
+      jwtFromRequest: ExtractJwt.fromExtractors([req => req.cookies?.accessToken, req => req.query?.accessToken]),
+      secretOrKey: configService.get('JTW_SECRE_OR_KEY'),
     });
   }
 

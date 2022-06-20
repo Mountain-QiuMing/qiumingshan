@@ -19,7 +19,7 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column({ length: 200, comment: '邮箱', select: false })
+  @Column({ length: 200, comment: '邮箱', select: false, unique: true })
   public email: string;
 
   @Column({ length: 10, comment: '用户名' })

@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import * as path from 'path';
 import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -27,6 +30,37 @@ import { UserEntity } from './modules/user/user.entity';
           // migrations: ['src/**/*.ts'],
           synchronize: true,
           charset: 'utf8mb4_unicode_ci',
+        };
+      },
+      inject: [ConfigService],
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          transport: {
+            host: configService.get('EMAIL_SMTP_HOST'),
+            port: configService.get('EMAIL_SMTP_PORT'),
+            secure: configService.get('EMAIL_SMTP_SECURE'),
+            auth: {
+              user: configService.get('EMAIL_SMTP_USER'),
+              pass: configService.get('EMAIL_SMTP_PASSWORD'),
+            },
+          },
+          tls: {
+            rejectUnauthorized: false, // 拒绝认证就行了， 不然会报证书问题
+          },
+
+          defaults: {
+            from: `"秋名山" <${configService.get('EMAIL_SMTP_USER')}>`,
+          },
+          template: {
+            dir: path.join(__dirname, './templates'),
+            adapter: new HandlebarsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
         };
       },
       inject: [ConfigService],

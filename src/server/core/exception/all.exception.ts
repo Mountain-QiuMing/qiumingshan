@@ -9,6 +9,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const data = {
       code: status,
       message: exception.message,
+      status: exception.getStatus() === HttpStatus.OK,
     };
 
     Logger.warn(AllExceptionsFilter.name);

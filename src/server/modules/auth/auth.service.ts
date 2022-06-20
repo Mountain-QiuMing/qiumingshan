@@ -1,12 +1,21 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { randomCode } from '../../utils/random-code';
+import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService, private readonly userService: UserService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async login(user: LoginDto) {
     const { username, password } = user;
@@ -31,15 +40,34 @@ export class AuthService {
 
   async register(userData: RegisterDto) {
     const entity = await this.userService.create(userData);
-
     if (entity) {
       const { id, username: realUsername } = entity;
       const payload = { id, username: realUsername };
       const token = this.jwtService.sign(payload);
+      const verifyUrl = `${this.configService.get('EMAIL_VERIFY_URL')}?accessToken=${token}`;
 
-      return {
-        token,
-      };
+      try {
+        await this.mailerService.sendMail({
+          to: userData.email,
+          subject: '请验证你的邮箱',
+          template: 'email-verify.template.hbs',
+          context: {
+            ...entity,
+            verifyUrl,
+            randomCode: randomCode(8),
+          },
+        });
+        return {
+          token,
+        };
+      } catch (e) {
+        console.log('邮件发送失败');
+        throw new BadRequestException(e);
+      }
     }
+  }
+
+  async verifyEmail(userData: UserEntity) {
+    return await this.userService.verifyEmail(userData);
   }
 }

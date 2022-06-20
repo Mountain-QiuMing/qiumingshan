@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ApiException } from '../../core/exception/api.exception';
 import { CreateUserDto } from './dto';
 import { UserEntity } from './user.entity';
 
@@ -36,5 +37,30 @@ export class UserService {
       .addSelect('user.password');
 
     return queryBuilder.getOne();
+  }
+
+  async verifyEmail(userData: UserEntity) {
+    const user = await this.userRepository.findOneBy({ id: userData.id });
+    if (user) {
+      if (user.verified) {
+        throw new HttpException('邮箱已被验证，请勿重复验证', 200);
+      }
+      return this.userRepository.update(userData.id, {
+        verified: true,
+      });
+    } else {
+      throw new BadRequestException('用户不存在');
+    }
+  }
+
+  /** 通过用户 `id` 获取用户信息 */
+  async getUserInfoById(id: string) {
+    const entity = await this.userRepository.findOneBy({ id });
+
+    if (!entity) {
+      throw new NotFoundException('用户不存在');
+    }
+
+    return entity;
   }
 }

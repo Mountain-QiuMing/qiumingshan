@@ -4,6 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from '../../core/guard/jtw.guard';
+import { User } from '../../core/decorator/user.decorator';
+import { UserEntity } from '../user/user.entity';
 
 @Controller('api/auth')
 export class AuthController {
@@ -19,19 +21,9 @@ export class AuthController {
     return this.authService.register(user);
   }
 
-  // @Get('info')
-  // @UseGuards(new JwtAuthGuard())
-  // async info(@Req() req) {
-  //   if (req.user && req.user.id) {
-  //     return await this.authService.info(req.user.id);
-  //   }
-  // }
-
-  @Get('test')
-  @UseGuards(AuthGuard())
-  async authTest() {
-    return {
-      message: 'ok',
-    };
+  @Post('verify-email')
+  @UseGuards(new JwtAuthGuard())
+  async verifyEmail(@User() user: UserEntity) {
+    return this.authService.verifyEmail(user);
   }
 }
