@@ -36,7 +36,7 @@
     "framer-motion": "^6.3.11",
     "lodash-es": "^4.17.21",
     "mysql2": "^2.3.3",
-    "next": "^12.1.6",
+    "next": "^12.1.7-canary.41",
     "passport": "^0.5.0",
     "passport-jwt": "^4.0.0",
     "react": "^18.2.0",
