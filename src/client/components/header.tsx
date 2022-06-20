@@ -22,9 +22,9 @@ const Header: FC = () => {
           秋名山
         </Heading>
       </Box>
-      <Box as="ul" pl={[4, 10]} display="flex" alignItems="center" className="menus">
+      <Box as="ul" pl={[4, 10]} className="menus">
         {menuList.map(menu => (
-          <Box as="li" mr={[4, 10]} fontSize="large" key={menu.path}>
+          <Box as="li" mr={[4, 10]} fontSize={['md', 'large']} key={menu.path}>
             <Link href={menu.path}>{menu.name}</Link>
           </Box>
         ))}
@@ -38,6 +38,8 @@ export default Header;
 const headerStyle = css`
   display: flex;
   .menus {
+    display: flex;
+    align-items: center;
     list-style: none;
   }
 `;
