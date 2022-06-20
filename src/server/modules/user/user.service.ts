@@ -1,7 +1,6 @@
 import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiException } from '../../core/exception/api.exception';
 import { CreateUserDto } from './dto';
 import { UserEntity } from './user.entity';
 
