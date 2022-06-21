@@ -15,7 +15,7 @@ import { HttpStrategy } from './http.strategy';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         return {
-          secret: configService.get('JTW_SECRE_OR_KEY'),
+          secret: configService.get('JTW_SECRET_OR_KEY'),
           signOptions: {
             expiresIn: '7d',
           },

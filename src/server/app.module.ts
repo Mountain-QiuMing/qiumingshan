@@ -47,10 +47,6 @@ import { UserEntity } from './modules/user/user.entity';
               pass: configService.get('EMAIL_SMTP_PASSWORD'),
             },
           },
-          tls: {
-            rejectUnauthorized: false, // 拒绝认证就行了， 不然会报证书问题
-          },
-
           defaults: {
             from: `"秋名山" <${configService.get('EMAIL_SMTP_USER')}>`,
           },

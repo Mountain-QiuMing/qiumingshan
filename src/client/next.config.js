@@ -4,4 +4,12 @@ module.exports = {
   compiler: {
     emotion: true,
   },
+  webpack: config => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false, // 处理浏览器端使用 dotenv fs 的依赖
+    };
+
+    return config;
+  },
 };

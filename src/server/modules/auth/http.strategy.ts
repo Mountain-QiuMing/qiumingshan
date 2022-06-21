@@ -12,7 +12,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userService: UserService, private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([req => req.cookies?.accessToken, req => req.query?.accessToken]),
-      secretOrKey: configService.get('JTW_SECRE_OR_KEY'),
+      secretOrKey: configService.get('JTW_SECRET_OR_KEY'),
     });
   }
 

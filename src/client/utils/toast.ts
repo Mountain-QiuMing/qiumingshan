@@ -9,7 +9,7 @@ const { toast: $toast } = createStandaloneToast({
   },
 });
 
-const toastStauts: UseToastOptions['status'][] = ['info', 'error', 'loading', 'success', 'warning'];
+const toastStatus: UseToastOptions['status'][] = ['info', 'error', 'loading', 'success', 'warning'];
 
 function toastFn(message: string, options?: UseToastOptions) {
   const toastOption = options ? { ...options, description: message } : { description: message };
@@ -26,7 +26,7 @@ type ToastInstance = typeof toastFn & {
 
 const toast = toastFn as ToastInstance;
 
-toastStauts.forEach(status => {
+toastStatus.forEach(status => {
   toast[status] = (message: string, options?: UseToastOptions) => {
     return toastFn(message, {
       ...options,
