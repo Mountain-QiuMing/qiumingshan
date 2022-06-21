@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MulterModule } from '@nestjs/platform-express';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
+import { FileModule } from './modules/file/file.module';
 import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -61,6 +63,16 @@ import { UserEntity } from './modules/user/user.entity';
       },
       inject: [ConfigService],
     }),
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          dest: configService.get('MULTER_DEST'),
+        };
+      },
+      inject: [ConfigService],
+    }),
+    FileModule,
     PostModule,
     UserModule,
     AuthModule,

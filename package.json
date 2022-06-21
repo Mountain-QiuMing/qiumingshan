@@ -57,6 +57,7 @@
   "devDependencies": {
     "@nestjs/cli": "^8.2.6",
     "@types/bcrypt": "^5.0.0",
+    "@types/multer": "^1.4.7",
     "@types/node": "^12.12.21",
     "@types/passport-jwt": "^3.0.6",
     "@types/react": "^18.0.14",
