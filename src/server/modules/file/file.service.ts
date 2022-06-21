@@ -14,12 +14,12 @@ export class FileService {
    * @param {string} type 文件类别
    * @return {Promise<Result>} result
    */
-  async upload(fileData: Express.Multer.File, type: string = ''): Promise<FileEntity> {
+  async upload(fileData: Express.Multer.File, type = ''): Promise<FileEntity> {
     let file: FileEntity;
 
     try {
       const fileName = fileData.filename.split('.');
-      let fileLike: DeepPartial<FileEntity> = {
+      const fileLike: DeepPartial<FileEntity> = {
         ...fileData,
         type,
         fieldName: fileData.fieldname,
@@ -45,8 +45,7 @@ export class FileService {
    */
   async getFile(fileName: string): Promise<FileEntity> {
     const file = await this.fileRepository.findOneBy({ fileName });
-    if (!file)
-      throw new ApiException(`'${fileName}' 文件不存在`, 404);
+    if (!file) throw new ApiException(`'${fileName}' 文件不存在`, 404);
 
     return file;
   }
