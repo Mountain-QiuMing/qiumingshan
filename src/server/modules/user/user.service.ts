@@ -54,8 +54,14 @@ export class UserService {
   }
 
   /** 通过用户 `id` 获取用户信息 */
-  async getUserInfoById(id: string) {
-    const entity = await this.userRepository.findOneBy({ id });
+  async getUserInfoById(id: string, email = false) {
+    const queryBuilder = await this.userRepository.createQueryBuilder('user').where('user.id = :id', { id });
+
+    if (email) {
+      queryBuilder.addSelect('user.email');
+    }
+
+    const entity = await queryBuilder.getOne();
 
     if (!entity) {
       throw new NotFoundException('用户不存在');

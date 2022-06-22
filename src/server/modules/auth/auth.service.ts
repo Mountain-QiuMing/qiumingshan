@@ -40,6 +40,29 @@ export class AuthService {
     };
   }
 
+  async sendVerifyEmail(userData: UserEntity, token: string) {
+    const verifyUrl = `${this.configService.get('EMAIL_VERIFY_URL')}?accessToken=${token}`;
+    let emailContext = userData;
+    if (!emailContext.email) {
+      emailContext = await this.userService.getUserInfoById(userData.id, true);
+    }
+    await this.mailerService
+      .sendMail({
+        to: emailContext.email,
+        subject: '请验证你的邮箱',
+        template: 'email-verify.template.hbs',
+        context: {
+          ...emailContext,
+          verifyUrl,
+          randomCode: randomCode(8),
+        },
+      })
+      .catch(e => {
+        console.log('邮件发送失败');
+        throw new BadRequestException(e);
+      });
+  }
+
   async register(userData: RegisterDto) {
     const entity = await this.userService.create(userData);
     if (entity) {
@@ -47,25 +70,7 @@ export class AuthService {
       const payload = { id, username: realUsername };
       const token = this.jwtService.sign(payload);
       const verifyUrl = `${this.configService.get('EMAIL_VERIFY_URL')}?accessToken=${token}`;
-
-      try {
-        await this.mailerService.sendMail({
-          to: userData.email,
-          subject: '请验证你的邮箱',
-          template: 'email-verify.template.hbs',
-          context: {
-            ...entity,
-            verifyUrl,
-            randomCode: randomCode(8),
-          },
-        });
-        return {
-          token,
-        };
-      } catch (e) {
-        console.log('邮件发送失败');
-        throw new BadRequestException(e);
-      }
+      this.sendVerifyEmail(entity, verifyUrl);
     }
   }
 
