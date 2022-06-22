@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NextImage from 'next/image';
 import { css } from '@emotion/react';
-import { Box, Heading, Menu, MenuButton, MenuItem, MenuList, Show, Image } from '@chakra-ui/react';
+import { Box, Heading, Menu, MenuButton, MenuItem, MenuList, Show, Image, Hide } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { getCookie, getCookies, removeCookies } from 'cookies-next';
@@ -39,9 +39,9 @@ const Header: FC = () => {
   return (
     <Box height={[16, 20]} px={[4, 5, 20]} css={headerStyle}>
       <Box display="flex" alignItems="center">
-        <Show above="sm">
+        <Hide below="sm">
           <NextImage className="logo-img" src="/logo.png" width="40px" height="40px" />
-        </Show>
+        </Hide>
 
         <Heading ml={2} fontSize="2xl">
           秋名山
