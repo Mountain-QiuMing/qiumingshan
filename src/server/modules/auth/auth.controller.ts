@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -24,5 +24,19 @@ export class AuthController {
   @UseGuards(new JwtAuthGuard())
   async verifyEmail(@User() user: UserEntity) {
     return this.authService.verifyEmail(user);
+  }
+
+  @Get('info')
+  @UseGuards(new JwtAuthGuard())
+  async info(@User() user: UserEntity) {
+    if (user?.id) {
+      return await this.authService.info(user.id);
+    }
+  }
+
+  @Put('update')
+  @UseGuards(new JwtAuthGuard())
+  async update(@User() user, @Param() id: string, @Body() userData: UserEntity) {
+    return await this.authService.update(user.id, userData);
   }
 }

@@ -5,8 +5,8 @@ import { css } from '@emotion/react';
 import { Register } from 'shared/interface/user/register.interface';
 import Bg from 'assets/images/bg.webp';
 import { apiRegister } from '../api/user/register.api';
-import { useRouter } from 'next/router';
 import NextLink from 'next/link';
+import { toast } from '../utils/toast';
 
 const defaultValues: Register = {
   email: '123456',
@@ -15,7 +15,6 @@ const defaultValues: Register = {
 };
 
 export default () => {
-  const router = useRouter();
   const {
     handleSubmit,
     register,
@@ -25,7 +24,7 @@ export default () => {
   const onSubmit = handleSubmit(async value => {
     const res = await apiRegister(value);
     if (res.status) {
-      router.replace('/');
+      toast.success('注册成功，您现在可以去登录了');
     }
   });
 

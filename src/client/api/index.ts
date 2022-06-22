@@ -1,10 +1,11 @@
-import axios, { AxiosRequestConfig } from 'axios';
-import { BASE_URL } from '../config/constanst';
+import axios, { AxiosRequestConfig, Method } from 'axios';
+import { BASE_URL } from '../config/constants';
 import { toast } from '../utils/toast';
 
 const axiosInstance = axios.create({
   timeout: 12000,
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -52,8 +53,6 @@ export type Response<T = any> = {
   message: string;
   result: T;
 };
-
-type Method = 'get' | 'post';
 
 export type MyResponse<T = any> = Promise<Response<T>>;
 

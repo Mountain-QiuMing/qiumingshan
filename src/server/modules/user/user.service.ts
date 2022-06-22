@@ -1,6 +1,7 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ApiException } from '../../core/exception/api.exception';
 import { CreateUserDto } from './dto';
 import { UserEntity } from './user.entity';
 
@@ -61,5 +62,15 @@ export class UserService {
     }
 
     return entity;
+  }
+
+  async updateUserInfoById(id: string, user: Partial<UserEntity>) {
+    const entity = await this.userRepository.findOneBy({ id });
+
+    if (!entity) {
+      return new ApiException('用户不存在', HttpStatus.NOT_FOUND);
+    }
+
+    return this.userRepository.update(id, user);
   }
 }

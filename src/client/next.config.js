@@ -4,6 +4,9 @@ module.exports = {
   compiler: {
     emotion: true,
   },
+  experimental: {
+    externalDir: true,
+  },
   webpack: config => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

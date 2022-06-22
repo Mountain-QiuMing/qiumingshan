@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable, ArgumentMetadata, HttpException, HttpStatus } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { StatusEnum } from '../constants/status';
+import { StatusCodeEnum } from 'shared/constants/status-code.enum';
 
 interface Props {
   /** 是否为 websocket */
@@ -32,7 +32,7 @@ export class ValidationPipe implements PipeTransform<any> {
       Object.keys(error.constraints).forEach(key => {
         throw new HttpException(
           {
-            code: StatusEnum.INVALID_PARAMETER,
+            code: StatusCodeEnum.INVALID_PARAMETER,
             message: error.constraints[key],
           },
           HttpStatus.OK,

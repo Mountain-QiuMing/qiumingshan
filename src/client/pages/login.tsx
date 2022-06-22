@@ -7,9 +7,10 @@ import { apiLogin } from '../api/user/login.api';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import { Login } from 'shared/interface/user/login.interface';
+import { setCookies } from 'cookies-next';
 
 const defaultValues: Login = {
-  username: '123456',
+  username: 'winme',
   password: '123456',
 };
 
@@ -24,6 +25,9 @@ export default () => {
   const onSubmit = handleSubmit(async value => {
     const res = await apiLogin(value);
     if (res.status) {
+      for (const key in res.result) {
+        setCookies(key, res.result[key]);
+      }
       router.replace('/');
     }
   });

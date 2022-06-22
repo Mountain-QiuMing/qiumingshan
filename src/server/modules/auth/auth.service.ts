@@ -2,6 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import _ from 'lodash-es';
 import { randomCode } from '../../utils/random-code';
 import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
@@ -35,6 +36,7 @@ export class AuthService {
 
     return {
       token,
+      ..._.omit(result, 'password'),
     };
   }
 
@@ -69,5 +71,13 @@ export class AuthService {
 
   async verifyEmail(userData: UserEntity) {
     return await this.userService.verifyEmail(userData);
+  }
+
+  async info(id: string) {
+    return await this.userService.getUserInfoById(id);
+  }
+
+  async update(id: string, user: UserEntity) {
+    return await this.userService.updateUserInfoById(id, user);
   }
 }

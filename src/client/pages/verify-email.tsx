@@ -47,7 +47,6 @@ const VerifyEmailPage = (props: VerifyEmailPageProps) => {
 
 export const getServerSideProps: GetServerSideProps<VerifyEmailPageProps> = async ({ query }) => {
   const res = await apiVerifyEmail({ accessToken: query.accessToken as string });
-  console.log(res);
   if (res.status) {
     return {
       props: {

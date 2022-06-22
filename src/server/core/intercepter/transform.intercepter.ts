@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { StatusEnum } from '../constants/status';
+import { StatusCodeEnum } from 'shared/constants/status-code.enum';
 
 @Injectable()
 export class TransformInterceptor implements NestInterceptor {
@@ -11,14 +11,14 @@ export class TransformInterceptor implements NestInterceptor {
       map(result => {
         if (typeof result === 'string') {
           return {
-            code: StatusEnum.SUCCESS,
+            code: StatusCodeEnum.SUCCESS,
             status: true,
             message: result,
           };
         }
 
         return {
-          code: StatusEnum.SUCCESS,
+          code: StatusCodeEnum.SUCCESS,
           status: true,
           result,
         };

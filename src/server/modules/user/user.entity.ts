@@ -11,7 +11,8 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { PostEntity } from '../post/post.entity';
-import { RoleEnum } from '../../core/constants/role';
+import { RoleEnum } from 'shared/constants/role.enum';
+import { ThemeEnum } from 'shared/constants/theme.enum';
 
 @Entity({ name: 'user' })
 @Unique(['email', 'username'])
@@ -40,8 +41,8 @@ export class UserEntity {
   @Column({ comment: '邮箱是否验证', type: 'boolean', default: false })
   public verified: boolean;
 
-  // @Column({ comment: '邮箱验证随机数', length: 8 })
-  // public randString: string;
+  @Column({ comment: '系统主题色', type: 'enum', enum: ThemeEnum, default: ThemeEnum.light })
+  public theme: string;
 
   @Column({ comment: ' 上次登录时间', default: null })
   public lastLoginTime?: Date;

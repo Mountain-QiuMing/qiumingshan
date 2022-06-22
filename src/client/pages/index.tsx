@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { request } from '../api';
 import Layout from '../components/layout';
 
@@ -7,7 +7,7 @@ const IndexPage = props => {
     <Layout title="Home | Next.js + TypeScript Example">
       <h1>Posts</h1>
       <ul>
-        {props.posts.map((post, index) => (
+        {props.posts?.map((post, index) => (
           <li key={index}>
             <h3>{post.title}</h3>
             <p>{post.content}</p>
@@ -18,7 +18,7 @@ const IndexPage = props => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const res = await request('get', '/post');
   return { props: { posts: res.result || [] } };
 };
