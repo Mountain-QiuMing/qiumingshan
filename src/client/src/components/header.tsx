@@ -9,6 +9,7 @@ import ThemeSwitch from './theme-switch';
 import { apiUpdateUserInfo } from '../api/user/user-info';
 import { ThemeEnum } from 'shared/constants/theme.enum';
 import { useStore } from '../store';
+import HeaderNavLink from './header-nav-link';
 
 const menuList = [
   { name: '首页', path: '/' },
@@ -18,65 +19,73 @@ const menuList = [
 
 const Header: FC = () => {
   const router = useRouter();
-  const { setUserInfo } = useStore();
+  const store = useStore();
 
   const showUserInfo = () => {
     const username = getCookie('username');
     router.push(`/user/${username}`);
   };
+
   const handleLogout = () => {
     const cookies = getCookies();
     for (const key in cookies) {
       removeCookies(key);
     }
-    router.replace('/login');
+    store.clearUserInfo();
   };
 
   const handleThemeChange = (nextTheme: ThemeEnum) => {
-    setUserInfo({
+    store.setUserInfo({
       theme: nextTheme,
     });
-    apiUpdateUserInfo({
-      theme: nextTheme,
-    });
+    store.token &&
+      apiUpdateUserInfo({
+        theme: nextTheme,
+      });
   };
 
   return (
     <Box height={[16, 20]} px={[4, 5, 20]} css={headerStyle}>
-      <Box display="flex" alignItems="center">
-        <Hide below="sm">
-          <NextImage className="logo-img" src="/logo.png" width="40px" height="40px" />
-        </Hide>
+      <Link href="/">
+        <div className="logo">
+          <Hide below="sm">
+            <NextImage className="logo-img" src="/logo.png" width="40px" height="40px" />
+          </Hide>
 
-        <Heading ml={2} fontSize="2xl">
-          秋名山
-        </Heading>
-      </Box>
+          <Heading ml={2} fontSize="2xl">
+            秋名山
+          </Heading>
+        </div>
+      </Link>
       <Box as="ul" pl={[4, 5, 10]} className="menus">
         {menuList.map(menu => (
           <Box as="li" mr={[4, 10]} fontSize={['md', 'large']} key={menu.path}>
-            <Link href={menu.path}>{menu.name}</Link>
+            <HeaderNavLink href={menu.path}>{menu.name}</HeaderNavLink>
           </Box>
         ))}
       </Box>
-      <Box display="flex" alignItems="center">
+      <Box display="flex" alignItems="center" userSelect="none">
         <Show above="sm">
           <ThemeSwitch mr={4} onChange={handleThemeChange} />
         </Show>
-        <Menu>
-          <MenuButton>
-            <Image
-              boxSize="2rem"
-              borderRadius="full"
-              src="https://placekitten.com/100/100"
-              alt="Fluffybuns the destroyer"
-            />
-          </MenuButton>
-          <MenuList>
-            <MenuItem onClick={showUserInfo}>个人信息</MenuItem>
-            <MenuItem onClick={handleLogout}>退出登录</MenuItem>
-          </MenuList>
-        </Menu>
+        {store.token ? (
+          <Menu>
+            <MenuButton>
+              <Image
+                boxSize="2rem"
+                borderRadius="full"
+                src="https://placekitten.com/100/100"
+                alt="Fluffybuns the destroyer"
+              />
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={showUserInfo}>个人信息</MenuItem>
+              <MenuItem onClick={handleLogout}>退出登录</MenuItem>
+            </MenuList>
+          </Menu>
+        ) : (
+          <Link href="/login">登录/注册</Link>
+        )}
       </Box>
     </Box>
   );
@@ -87,6 +96,11 @@ export default Header;
 const headerStyle = css`
   display: flex;
   align-items: center;
+  .logo {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
   .menus {
     flex: 1;
     display: flex;

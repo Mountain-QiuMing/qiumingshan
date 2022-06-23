@@ -1,3 +1,4 @@
+import { merge } from 'lodash-es';
 import { useLayoutEffect } from 'react';
 import { RoleEnum } from 'shared/constants/role.enum';
 import { ThemeEnum } from 'shared/constants/theme.enum';
@@ -7,13 +8,12 @@ import createContext from 'zustand/context';
 
 interface BearState extends BaseUserInfo {
   setUserInfo: (userInfo: Partial<BaseUserInfo>) => void;
+  clearUserInfo: () => void;
 }
 
 let store: UseBoundStore<StoreApi<BearState>>;
 
-function noop(..._arg: any): any {}
-
-export const getDefaultInitialState = (cookies = {} as any): BearState => ({
+export const getDefaultInitialState = (cookies = {} as any) => ({
   avatar: cookies.avatar || '',
   createTime: cookies.createTime || '',
   id: cookies.id || '',
@@ -26,7 +26,6 @@ export const getDefaultInitialState = (cookies = {} as any): BearState => ({
   username: cookies.username || '',
   verified: cookies.verified ? JSON.parse(decodeURIComponent(cookies.verified)) : false,
   theme: (cookies.theme as ThemeEnum) || ThemeEnum.light,
-  setUserInfo: noop,
 });
 
 const zustandContext = createContext<StoreApi<BearState>>();
@@ -37,10 +36,12 @@ export const useStore = zustandContext.useStore;
 
 export const initializeStore = (preloadedState = {}) => {
   return create<BearState>(set => ({
-    ...getDefaultInitialState(),
-    ...preloadedState,
+    ...merge(getDefaultInitialState(), preloadedState),
     setUserInfo: (userInfo: Partial<BaseUserInfo>) => {
       set(userInfo);
+    },
+    clearUserInfo: () => {
+      set(getDefaultInitialState());
     },
   }));
 };
@@ -54,13 +55,7 @@ export function useCreateStore(serverInitialState: StoreApi<BearState>) {
 
   useLayoutEffect(() => {
     if (serverInitialState && isReusingStore) {
-      store.setState(
-        {
-          ...store.getState(),
-          ...serverInitialState,
-        },
-        true,
-      );
+      store.setState(merge(store.getState(), serverInitialState), true);
     }
   });
 

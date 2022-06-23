@@ -25,7 +25,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   };
   return (
     <div>
-      {!store.verified && (
+      {store.token && !store.verified && (
         <Alert status="warning">
           <AlertIcon />
           <p>
