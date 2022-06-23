@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps<VerifyEmailPageProps> = asyn
   if (res.status) {
     return {
       props: {
-        message: res.message,
+        message: res.message || '',
       },
     };
   } else {

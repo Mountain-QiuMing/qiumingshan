@@ -36,7 +36,6 @@ export const StoreProvider = zustandContext.Provider;
 export const useStore = zustandContext.useStore;
 
 export const initializeStore = (preloadedState = {}) => {
-  console.log('preloadedState', preloadedState);
   return create<BearState>(set => ({
     ...getDefaultInitialState(),
     ...preloadedState,
