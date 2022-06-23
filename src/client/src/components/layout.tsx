@@ -3,6 +3,7 @@ import React, { FC, ReactNode, useState } from 'react';
 import { apiSendVerifyEmail } from '../api/user/verify-email.api';
 import { toast } from '@/utils/toast';
 import Header from './header';
+import { useStore } from '../store';
 
 interface LayoutProps {
   title?: string;
@@ -11,7 +12,7 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   // const verified = getCookie('verified');
-  const verified = false;
+  const store = useStore();
   const [loading, setLoading] = useState(false);
 
   const handleReSendVerifyEmail = async () => {
@@ -24,7 +25,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   };
   return (
     <div>
-      {!verified && (
+      {!store.verified && (
         <Alert status="warning">
           <AlertIcon />
           <p>

@@ -8,6 +8,7 @@ import { getCookie, getCookies, removeCookies } from 'cookies-next';
 import ThemeSwitch from './theme-switch';
 import { apiUpdateUserInfo } from '../api/user/user-info';
 import { ThemeEnum } from 'shared/constants/theme.enum';
+import { useStore } from '../store';
 
 const menuList = [
   { name: '首页', path: '/' },
@@ -17,6 +18,7 @@ const menuList = [
 
 const Header: FC = () => {
   const router = useRouter();
+  const { setUserInfo } = useStore();
 
   const showUserInfo = () => {
     const username = getCookie('username');
@@ -31,6 +33,9 @@ const Header: FC = () => {
   };
 
   const handleThemeChange = (nextTheme: ThemeEnum) => {
+    setUserInfo({
+      theme: nextTheme,
+    });
     apiUpdateUserInfo({
       theme: nextTheme,
     });

@@ -2,12 +2,13 @@ import { useForm } from 'react-hook-form';
 import { FormErrorMessage, Input, Button, FormControl, Text, Link } from '@chakra-ui/react';
 import ThemeSwitch from '@/components/theme-switch';
 import { css } from '@emotion/react';
-import Bg from 'assets/images/bg.webp';
+import Bg from '@/assets/images/bg.webp';
 import { apiLogin } from '@/api/user/login.api';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import { Login } from 'shared/interface/user/login.interface';
 import { setCookies } from 'cookies-next';
+import { useStore } from '../src/store';
 
 const defaultValues: Login = {
   username: 'winme',
@@ -21,10 +22,12 @@ export default () => {
     register,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues: defaultValues });
+  const { setUserInfo } = useStore();
 
   const onSubmit = handleSubmit(async value => {
     const res = await apiLogin(value);
     if (res.status) {
+      setUserInfo(res.result);
       for (const key in res.result) {
         setCookies(key, res.result[key]);
       }
