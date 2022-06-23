@@ -1,5 +1,4 @@
 import { Alert, AlertIcon, Button } from '@chakra-ui/react';
-import { getCookie } from 'cookies-next';
 import React, { FC, ReactNode, useState } from 'react';
 import { apiSendVerifyEmail } from '../api/user/verify-email.api';
 import { toast } from '../utils/toast';
@@ -11,8 +10,8 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const verified = getCookie('verified');
-  console.log(verified);
+  // const verified = getCookie('verified');
+  const verified = false;
   const [loading, setLoading] = useState(false);
 
   const handleReSendVerifyEmail = async () => {
