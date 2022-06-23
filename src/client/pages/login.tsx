@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { FormErrorMessage, Input, Button, FormControl, Text, Link } from '@chakra-ui/react';
-import ThemeSwitch from '../components/theme-switch';
+import ThemeSwitch from '@/components/theme-switch';
 import { css } from '@emotion/react';
 import Bg from 'assets/images/bg.webp';
-import { apiLogin } from '../api/user/login.api';
+import { apiLogin } from '@/api/user/login.api';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import { Login } from 'shared/interface/user/login.interface';

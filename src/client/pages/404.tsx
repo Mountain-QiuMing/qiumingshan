@@ -1,7 +1,7 @@
 import { Button, Heading, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { HomeFillIcon } from 'ultra-icon';
-import Layout from '../components/layout';
+import Layout from '@/components/layout';
 
 const NotFoundPage = () => {
   return (

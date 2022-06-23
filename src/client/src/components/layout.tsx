@@ -1,7 +1,7 @@
 import { Alert, AlertIcon, Button } from '@chakra-ui/react';
 import React, { FC, ReactNode, useState } from 'react';
 import { apiSendVerifyEmail } from '../api/user/verify-email.api';
-import { toast } from '../utils/toast';
+import { toast } from '@/utils/toast';
 import Header from './header';
 
 interface LayoutProps {

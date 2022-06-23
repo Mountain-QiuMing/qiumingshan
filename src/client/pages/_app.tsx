@@ -1,9 +1,9 @@
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 import { CacheProvider, EmotionCache, Global, ThemeProvider } from '@emotion/react';
-import globalStyle from '../style/global';
-import { theme } from '../style/theme';
-import createEmotionCache from '../utils/create-emotion-cache';
+import globalStyle from '@/style/global';
+import { theme } from '@/style/theme';
+import createEmotionCache from '@/utils/create-emotion-cache';
 
 const clientSideEmotionCache = createEmotionCache();
 

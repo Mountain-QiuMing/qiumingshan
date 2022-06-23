@@ -2,8 +2,8 @@ import React from 'react';
 import { ColorModeScript } from '@chakra-ui/react';
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
-import createEmotionCache from '../utils/create-emotion-cache';
-import { colorModeConfig } from '../style/theme/config';
+import createEmotionCache from '@/utils/create-emotion-cache';
+import { colorModeConfig } from '@/style/theme/config';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {

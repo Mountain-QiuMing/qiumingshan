@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form';
 import { FormErrorMessage, Input, Button, FormControl, Text, Link } from '@chakra-ui/react';
-import ThemeSwitch from '../components/theme-switch';
+import ThemeSwitch from '@/components/theme-switch';
 import { css } from '@emotion/react';
 import { Register } from 'shared/interface/user/register.interface';
 import Bg from 'assets/images/bg.webp';
-import { apiRegister } from '../api/user/register.api';
+import { apiRegister } from '@/api/user/register.api';
 import NextLink from 'next/link';
-import { toast } from '../utils/toast';
+import { toast } from '@/utils/toast';
 
 const defaultValues: Register = {
   email: '123456',

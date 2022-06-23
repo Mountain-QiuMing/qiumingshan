@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next';
-import { apiVerifyEmail } from '../api/user/verify-email.api';
+import { apiVerifyEmail } from '@/api/user/verify-email.api';
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Button } from '@chakra-ui/react';
 import Link from 'next/link';
 

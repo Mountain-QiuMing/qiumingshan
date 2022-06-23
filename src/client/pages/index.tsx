@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
-import { request } from '../api';
-import Layout from '../components/layout';
+import { request } from '@/api';
+import Layout from '@/components/layout';
 
 const IndexPage = props => {
   return (

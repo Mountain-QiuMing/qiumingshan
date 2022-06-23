@@ -17,9 +17,9 @@
     "baseUrl": "./",
     "paths": {
       "shared/*": ["../shared/*"],
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "next.config.js", "../shared"],
+  "include": ["src", "pages", "**/*.d.ts", "next.config.js", "../shared"],
   "exclude": ["node_modules"]
 }

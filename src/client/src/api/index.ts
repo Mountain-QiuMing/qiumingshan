@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import { BASE_URL } from '../config/constants';
-import { toast } from '../utils/toast';
+import { toast } from '@/utils/toast';
 
 const axiosInstance = axios.create({
   timeout: 12000,
