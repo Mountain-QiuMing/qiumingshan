@@ -24,17 +24,17 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   };
   return (
     <div>
-      <Alert status="warning">
-        <AlertIcon />
-        {!verified && (
+      {!verified && (
+        <Alert status="warning">
+          <AlertIcon />
           <p>
             您的邮箱还没有认证，请尽快前往收件箱完成验证，否则无法使用秋名山的部分功能。没收到邮件或已过期？点击
             <Button ml="2" size="xs" isLoading={loading} onClick={handleReSendVerifyEmail}>
               重新发送
             </Button>
           </p>
-        )}
-      </Alert>
+        </Alert>
+      )}
       <Header />
       {children}
     </div>
