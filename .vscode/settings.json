@@ -8,5 +8,6 @@
     "source.fixAll.eslint": true
   },
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.words": ["Excalidraw", "katex", "neteast", "Resizer", "typeahead"]
 }

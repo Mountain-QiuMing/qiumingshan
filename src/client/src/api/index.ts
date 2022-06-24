@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import { BASE_URL } from '../config/constants';
 import { toast } from '@/utils/toast';
+import { getCookies, removeCookies } from 'cookies-next';
 
 const axiosInstance = axios.create({
   timeout: 12000,
@@ -26,6 +27,22 @@ axiosInstance.interceptors.response.use(
     return config.data;
   },
   error => {
+    const cookies = getCookies();
+    console.log(error);
+    if (error.response?.status === 401) {
+      for (const key in cookies) {
+        removeCookies(key);
+      }
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
+      return {
+        status: false,
+        code: error.response.status,
+        message: '',
+        result: null,
+      };
+    }
     // history.replace('/login');
     let errorMessage = '系统异常';
 

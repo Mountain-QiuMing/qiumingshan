@@ -11,7 +11,7 @@ interface BearState extends BaseUserInfo {
   clearUserInfo: () => void;
 }
 
-let store: UseBoundStore<StoreApi<BearState>>;
+export let store: UseBoundStore<StoreApi<BearState>>;
 
 export const getDefaultInitialState = (cookies = {} as any) => ({
   avatar: cookies.avatar || '',
@@ -33,6 +33,8 @@ const zustandContext = createContext<StoreApi<BearState>>();
 export const StoreProvider = zustandContext.Provider;
 
 export const useStore = zustandContext.useStore;
+
+export const useStoreApi = zustandContext.useStoreApi;
 
 export const initializeStore = (preloadedState = {}) => {
   return create<BearState>(set => ({
