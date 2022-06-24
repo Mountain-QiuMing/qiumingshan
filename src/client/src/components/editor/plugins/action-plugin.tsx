@@ -1,11 +1,11 @@
 import { $convertFromMarkdownString } from '@lexical/markdown';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
-import { $createTextNode, $getRoot, $isParagraphNode, CLEAR_EDITOR_COMMAND } from 'lexical';
+import { $createTextNode, $getRoot, $isParagraphNode, CLEAR_EDITOR_COMMAND, LexicalCommand } from 'lexical';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { IconButton, Modal, Tooltip } from '@chakra-ui/react';
+import { Button, IconButton, Modal, Tooltip } from '@chakra-ui/react';
 import { DeleteBinLineIcon, LockLineIcon, LockUnlockLineIcon, MicrophoneFillIcon, MarkdownLineIcon } from 'ultra-icon';
 import { $isCodeNode } from '@lexical/code';
 import { UlTRA_TRANSFORMERS } from './markdown-transformers';
@@ -14,13 +14,13 @@ import { $createCodeNode } from '@lexical/code';
 import dynamic from 'next/dynamic';
 
 const SPEECH_TO_TEXT_COMMAND = dynamic(
-  () => import('./speech-to-text-plugin').then(module => module.SPEECH_TO_TEXT_COMMAND),
+  () => import('./speech-to-text-plugin').then(module => module.SPEECH_TO_TEXT_COMMAND) as any,
   { ssr: false },
-);
+) as any as LexicalCommand<boolean>;
 const SUPPORT_SPEECH_RECOGNITION = dynamic(
-  () => import('./speech-to-text-plugin').then(module => module.SPEECH_TO_TEXT_COMMAND),
+  () => import('./speech-to-text-plugin').then(module => module.SPEECH_TO_TEXT_COMMAND) as any,
   { ssr: false },
-);
+) as any as LexicalCommand<boolean>;
 
 const ActionsPlugins: FC = () => {
   const [editor] = useLexicalComposerContext();
@@ -77,7 +77,8 @@ const ActionsPlugins: FC = () => {
     <div className="actions" css={actionsStyles()}>
       {SUPPORT_SPEECH_RECOGNITION && (
         <Tooltip title="录音" placement="top">
-          <IconButton
+          <Button
+            colorScheme="gray"
             aria-label="speak to text"
             onClick={() => {
               editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
@@ -86,11 +87,12 @@ const ActionsPlugins: FC = () => {
             className={'action-button action-button-mic ' + (isSpeechToText ? 'active' : '')}
           >
             <MicrophoneFillIcon />
-          </IconButton>
+          </Button>
         </Tooltip>
       )}
       <Tooltip title="清空" placement="top">
-        <IconButton
+        <Button
+          colorScheme="gray"
           aria-label="clear"
           className="action-button clear"
           isDisabled={isEditorEmpty}
@@ -106,10 +108,11 @@ const ActionsPlugins: FC = () => {
           }}
         >
           <DeleteBinLineIcon />
-        </IconButton>
+        </Button>
       </Tooltip>
       <Tooltip title="只读" placement="top">
-        <IconButton
+        <Button
+          colorScheme="gray"
           aria-label="readonly"
           className="action-button lock"
           onClick={() => {
@@ -117,12 +120,12 @@ const ActionsPlugins: FC = () => {
           }}
         >
           {isReadOnly ? <LockUnlockLineIcon /> : <LockLineIcon />}
-        </IconButton>
+        </Button>
       </Tooltip>
       <Tooltip title="markdown" placement="top">
-        <IconButton aria-label="markdown" className="action-button" onClick={handleMarkdownToggle}>
+        <Button colorScheme="gray" aria-label="markdown" className="action-button" onClick={handleMarkdownToggle}>
           <MarkdownLineIcon />
-        </IconButton>
+        </Button>
       </Tooltip>
     </div>
   );
@@ -138,6 +141,10 @@ const actionsStyles = () => {
     padding: 10px;
     .action-button {
       margin-left: 5px;
+    }
+
+    .action-button:hover:not([disabled]) {
+      background-color: rgba(204, 204, 204, 0.3);
     }
     .action-button-mic.active {
       animation: mic-pulsate-color 3s infinite;

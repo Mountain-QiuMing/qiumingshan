@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
@@ -43,6 +43,9 @@ import {
   // Dropdown,
   Input,
   Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   Select,
   Toast,
@@ -154,7 +157,8 @@ function BlockOptionsDropdownList({ editor, blockType, setBlockType }) {
     h4: () => formatHeading('h4'),
   };
 
-  const onChangeBlockType = type => {
+  const onChangeBlockType = (e: ChangeEvent<HTMLSelectElement>) => {
+    const type = e.target.value;
     setBlockType(type);
     typeMap[type]();
   };
@@ -164,26 +168,27 @@ function BlockOptionsDropdownList({ editor, blockType, setBlockType }) {
       css={blockSelectStyle}
       value={Object.keys(typeMap).includes(blockType) ? blockType : 'paragraph'}
       onChange={onChangeBlockType}
+      width={20}
     >
-      <option value="paragraph">
-        <AlignJustifyIcon />
-        <span className="text">正文</span>
+      <option label="正文" value="paragraph">
+        {/* <AlignJustifyIcon />
+        <span className="text">正文</span> */}
       </option>
-      <option value="h1">
-        <H1Icon />
-        <span className="h1">标题1</span>
+      <option label="标题1" value="h1">
+        {/* <H1Icon />
+        <span className="h1">标题1</span> */}
       </option>
-      <option value="h2">
-        <H2Icon />
-        <span className="h2">标题2</span>
+      <option label="标题2" value="h2">
+        {/* <H2Icon />
+        <span className="h2">标题2</span> */}
       </option>
-      <option value="h3">
-        <H3Icon />
-        <span className="h3">标题3</span>
+      <option label="标题3" value="h3">
+        {/* <H3Icon />
+        <span className="h3">标题3</span> */}
       </option>
-      <option value="h4">
-        <H4Icon />
-        <span className="h4">标题4</span>
+      <option label="标题4" value="h4">
+        {/* <H4Icon />
+        <span className="h4">标题4</span> */}
       </option>
     </Select>
   );
@@ -356,8 +361,8 @@ export default function ToolbarPlugin() {
   );
 
   const onFontSizeSelect = useCallback(
-    value => {
-      applyStyleText({ 'font-size': value });
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      applyStyleText({ 'font-size': e.target.value });
     },
     [applyStyleText],
   );
@@ -416,7 +421,10 @@ export default function ToolbarPlugin() {
           ${codeTheme && codeBlockThemes[codeTheme]};
           .ultra-icon {
             svg {
+              width: 18px;
+              height: 18px;
               fill: currentColor;
+              /* font-size: var(--ck-fontSizes-xs); */
             }
             & + * {
               margin-left: 8px;
@@ -556,7 +564,7 @@ export default function ToolbarPlugin() {
         </Button>
       </Dropdown> */}
       <IconButton
-        aria-label="undo"
+        aria-label="撤销"
         icon={<ArrowGoBackLineIcon />}
         className="toolbar-item spaced"
         isDisabled={!canUndo}
@@ -566,7 +574,7 @@ export default function ToolbarPlugin() {
       ></IconButton>
 
       <IconButton
-        aria-label="redo"
+        aria-label="重做"
         icon={<ArrowGoForwardLineIcon />}
         isDisabled={!canRedo}
         onClick={() => {
@@ -582,7 +590,7 @@ export default function ToolbarPlugin() {
               <option label={l} value={l} key={l} />
             ))}
           </Select>
-          <Divider orientation="horizontal" />
+          <Divider orientation="vertical" />
           <Select
             className="code-theme"
             onChange={e => setCodeTheme(e.target.value as keyof typeof codeBlockThemes)}
@@ -595,26 +603,27 @@ export default function ToolbarPlugin() {
         </>
       ) : (
         <>
-          <Divider orientation="horizontal" />
-          {/* {supportedBlockTypes.has(blockType) && (
+          <Divider orientation="vertical" />
+          {supportedBlockTypes.has(blockType) && (
             <>
               <BlockOptionsDropdownList editor={editor} blockType={blockType} setBlockType={setBlockType} />
-              <Divider orientation="horizontal" />
+              <Divider orientation="vertical" />
             </>
           )}
-          <Select value={fontSize} onChange={onFontSizeSelect} style={{ minWidth: 80 }}>
+          <Select value={fontSize} onChange={onFontSizeSelect} width={20}>
             {fontSizeList.map(font => (
               <option value={font} key={font}>
                 {font}
               </option>
             ))}
-          </Select> */}
-          <Divider orientation="horizontal" />
+          </Select>
+          <Divider orientation="vertical" />
           <Tooltip title="加粗">
             <IconButton
               aria-label="text-bold"
               icon={<BoldIcon />}
-              className={'toolbar-item ' + (isBold ? 'ultra-button--active' : '')}
+              color={isBold ? 'primary.500' : ''}
+              className="toolbar-item"
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
               }}
@@ -624,7 +633,8 @@ export default function ToolbarPlugin() {
             <IconButton
               aria-label="text-italic"
               icon={<ItalicIcon />}
-              className={'toolbar-item ' + (isItalic ? 'ultra-button--active' : '')}
+              color={isItalic ? 'primary.500' : ''}
+              className="toolbar-item"
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
               }}
@@ -634,7 +644,8 @@ export default function ToolbarPlugin() {
             <IconButton
               aria-label="text-underline"
               icon={<UnderlineIcon />}
-              className={'toolbar-item ' + (isUnderline ? 'ultra-button--active' : '')}
+              color={isUnderline ? 'primary.500' : ''}
+              className="toolbar-item"
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
               }}
@@ -647,123 +658,138 @@ export default function ToolbarPlugin() {
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
               }}
-              className={'toolbar-item ' + (isStrikethrough ? 'active' : '')}
+              color={isStrikethrough ? 'primary.500' : ''}
+              className="toolbar-item"
             ></IconButton>
           </Tooltip>
-          {/* <Dropdown
-            content={
-              <Menu
-                style={{ padding: 0 }}
-                defaultSelectedKey={
-                  isCode ? 'code' : isSubscript ? 'subscript' : isSuperscript ? 'superscript' : undefined
-                }
+          <Menu>
+            <MenuButton as={IconButton} aria-label="Options" icon={<FontSize2Icon />} variant="outline" />
+            <MenuList>
+              <MenuItem
+                icon={<CodeSSlashLineIcon />}
+                command="⌘T"
+                onClick={() => {
+                  editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+                }}
               >
-                <Menu.SubMenu
-                  key="code"
-                  onClick={() => {
-                    editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-                  }}
-                >
-                  <CodeSSlashLineIcon />
-                  <span>行内代码</span>
-                </Menu.SubMenu>
-                <Menu.SubMenu key="subscript" onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}>
-                  <SubscriptIcon /> <span>下标</span>
-                </Menu.SubMenu>
-                <Menu.SubMenu
-                  key="superscript"
-                  onClick={() => {
-                    console.log(1);
-                  }}
-                >
-                  <SuperscriptIcon /> <span>上标</span>
-                </Menu.SubMenu>
-              </Menu>
-            }
-          >
-            <Button type="pure" className="toolbar-item">
-              <FontSize2Icon />
-            </Button>
-          </Dropdown> */}
+                行内代码
+              </MenuItem>
+              <MenuItem
+                icon={<SuperscriptIcon />}
+                command="⌘T"
+                onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript')}
+              >
+                下标
+              </MenuItem>
+              <MenuItem
+                icon={<SubscriptIcon />}
+                command="⌘N"
+                onClick={() => {
+                  editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
+                }}
+              >
+                上标
+              </MenuItem>
+            </MenuList>
+          </Menu>
           {/* <ColorPicker value={fontColor} onChange={onFontColorSelect}>
             <Button icon={<ArrowDropDownFillIcon />} className="font-color-button">
               <FontColorIcon />
             </Button>
           </ColorPicker> */}
-          {/* <Tooltip title="链接">
-            <Button
+          <Tooltip label="链接">
+            <IconButton
+              aria-label="链接"
               icon={<LinksLineIcon />}
               onClick={insertLink}
-              className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
-            ></Button>
-          </Tooltip> */}
+              color={isStrikethrough ? 'primary.500' : ''}
+              className="toolbar-item"
+            ></IconButton>
+          </Tooltip>
 
-          {/* {isLink && <LinkEditor />} */}
+          {isLink && <LinkEditor />}
 
-          {/* <Tooltip title="列表">
-            <Button
+          <Tooltip label="列表">
+            <IconButton
+              aria-label="列表"
               icon={<ListUnorderedIcon />}
-              className={'toolbar-item ' + (blockType === 'ul' ? 'active' : '')}
+              color={blockType === 'ul' ? 'primary.500' : ''}
+              className="toolbar-item"
               onClick={formatBulletList}
-            ></Button>
+            ></IconButton>
           </Tooltip>
-          <Tooltip title="有序列表">
-            <Button
+          <Tooltip label="有序列表">
+            <IconButton
+              aria-label="有序列表"
               icon={<ListOrderedIcon />}
-              className={'toolbar-item ' + (blockType === 'ol' ? 'active' : '')}
+              color={blockType === 'ol' ? 'primary.500' : ''}
+              className="toolbar-item"
               onClick={formatNumberedList}
-            ></Button>
+            ></IconButton>
           </Tooltip>
 
-          <Tooltip title="引用">
-            <Button
+          <Tooltip label="引用">
+            <IconButton
+              aria-label="引用"
               icon={<DoubleQuotesLIcon />}
-              className={'toolbar-item ' + (blockType === 'quote' ? 'active' : '')}
+              color={blockType === 'quote' ? 'primary.500' : ''}
+              className="toolbar-item"
               onClick={formatQuote}
-            ></Button>
+            ></IconButton>
           </Tooltip>
 
-          <Tooltip title="分隔符">
-            <Button
+          <Tooltip label="分隔符">
+            <IconButton
+              aria-label="分隔符"
               icon={<SeparatorIcon />}
               className="toolbar-item"
               onClick={() => {
-                console.log(editor);
                 editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, {});
               }}
-            ></Button>
+            ></IconButton>
           </Tooltip>
-          <Divider orientation="horizontal" /> */}
-          {/* <Dropdown
-            content={
-              <>
-                <Dropdown.Item onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left')}>
-                  <AlignLeftIcon /> <span>左对齐</span>
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center')}>
-                  <AlignCenterIcon /> <span>居中对齐</span>
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right')}>
-                  <AlignRightIcon /> <span>右对齐</span>
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify')}>
-                  <AlignJustifyIcon /> <span>两边对齐</span>
-                </Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item onClick={() => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, {})}>
-                  <IndentDecreaseIcon /> <span>左缩进</span>
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => editor.dispatchCommand(INDENT_CONTENT_COMMAND, {})}>
-                  <IndentIncreaseIcon /> <span>右缩进</span>
-                </Dropdown.Item>
-              </>
-            }
-          >
-            <Button className="toolbar-item">
-              <AlignLeftIcon />
+          <Divider orientation="vertical" />
+          <Menu>
+            <MenuButton as={Button} icon={<AlignLeftIcon />} className="toolbar-item">
               <span>对齐方式</span>
-            </Button>
-          </Dropdown> */}
+            </MenuButton>
+            <MenuList>
+              <MenuItem icon={<AlignLeftIcon />} onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left')}>
+                <span>左对齐</span>
+              </MenuItem>
+              <MenuItem
+                icon={<AlignCenterIcon />}
+                onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center')}
+              >
+                <span>居中对齐</span>
+              </MenuItem>
+              <MenuItem
+                icon={<AlignRightIcon />}
+                onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right')}
+              >
+                <span>右对齐</span>
+              </MenuItem>
+              <MenuItem
+                icon={<AlignJustifyIcon />}
+                onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify')}
+              >
+                <span>两边对齐</span>
+              </MenuItem>
+              <Divider />
+              <MenuItem
+                icon={<IndentDecreaseIcon />}
+                onClick={() => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, {})}
+              >
+                <span>左缩进</span>
+              </MenuItem>
+              <MenuItem
+                icon={<IndentIncreaseIcon />}
+                onClick={() => editor.dispatchCommand(INDENT_CONTENT_COMMAND, {})}
+              >
+                <span>右缩进</span>
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </>
       )}
       {/* <EquationModal visible={equationVisible} onVisibleChange={v => setEquationVisible(v)} /> */}
@@ -783,7 +809,7 @@ const toolbarStyles = () => {
     vertical-align: middle;
     overflow: auto;
 
-    .ultra-divider--vertical {
+    .chakra-divider[aria-orientation='vertical'] {
       height: 20px;
       margin: 0 8px;
     }
@@ -791,6 +817,7 @@ const toolbarStyles = () => {
     .toolbar-item {
       padding: 8px;
       margin: 0 4px;
+      background-color: transparent;
     }
 
     .toolbar-item:hover:not([disabled]) {
