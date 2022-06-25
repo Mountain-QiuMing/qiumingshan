@@ -1,7 +1,20 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import NextImage from 'next/image';
 import { css } from '@emotion/react';
-import { Box, Heading, Menu, MenuButton, MenuItem, MenuList, Show, Image, Hide, Button } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Show,
+  Image,
+  Hide,
+  Button,
+  Text,
+  ChakraProps,
+} from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { getCookie, getCookies, removeCookies } from 'cookies-next';
@@ -17,7 +30,13 @@ const menuList = [
   { name: '发现', path: '/explore' },
 ];
 
-const Header: FC = () => {
+interface HeaderProps extends ChakraProps {
+  children?: ReactNode;
+  between?: boolean;
+}
+
+const Header: FC<HeaderProps> = props => {
+  const { children, ...rest } = props;
   const router = useRouter();
   const store = useStore();
 
@@ -52,27 +71,34 @@ const Header: FC = () => {
             <NextImage className="logo-img" src="/logo.png" width="40px" height="40px" />
           </Hide>
 
-          <Heading ml={2} fontSize="2xl">
+          <Heading ml={2} fontSize={['large', 'larger', '2xl']}>
             秋名山
           </Heading>
         </div>
       </Link>
-      <Box as="ul" pl={[4, 5, 10]} className="menus">
-        {menuList.map(menu => (
-          <Box as="li" mr={[4, 10]} fontSize={['md', 'large']} key={menu.path}>
-            <HeaderNavLink href={menu.path}>{menu.name}</HeaderNavLink>
-          </Box>
-        ))}
+      <Box display="flex" flex="1" alignItems="center" px={[2, 4, 6]} {...rest}>
+        {children || (
+          <>
+            <Box as="ul" pl={[4, 5, 10]} className="menus">
+              {menuList.map(menu => (
+                <Box as="li" mr={[2, 4, 6, 8, 10]} fontSize={['md', 'large']} key={menu.path}>
+                  <HeaderNavLink href={menu.path}>{menu.name}</HeaderNavLink>
+                </Box>
+              ))}
+            </Box>
+            <Show above="sm">
+              <Link href="/write-post">
+                <Button mr={10} colorScheme="primary">
+                  发文
+                </Button>
+              </Link>
+            </Show>
+            <ThemeSwitch mr={1} onChange={handleThemeChange} />
+          </>
+        )}
       </Box>
+
       <Box display="flex" alignItems="center" userSelect="none">
-        <Show above="sm">
-          <Link href="/write-post">
-            <Button mr={10} colorScheme="primary">
-              发文
-            </Button>
-          </Link>
-          <ThemeSwitch mr={4} onChange={handleThemeChange} />
-        </Show>
         {store.token ? (
           <Menu>
             <MenuButton>
@@ -89,7 +115,9 @@ const Header: FC = () => {
             </MenuList>
           </Menu>
         ) : (
-          <Link href="/login">登录/注册</Link>
+          <Link href="/login">
+            <Text fontSize={[13, 15]}>登录/注册</Text>
+          </Link>
         )}
       </Box>
     </Box>

@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button } from '@chakra-ui/react';
+import { Alert, AlertIcon, Button, Container } from '@chakra-ui/react';
 import React, { FC, ReactNode, useState } from 'react';
 import { apiSendVerifyEmail } from '../api/user/verify-email.api';
 import { toast } from '@/utils/toast';
@@ -8,9 +8,10 @@ import { useStore } from '../store';
 interface LayoutProps {
   title?: string;
   children: ReactNode;
+  container?: boolean;
 }
 
-const Layout: FC<LayoutProps> = ({ children }) => {
+const Layout: FC<LayoutProps> = ({ children, container }) => {
   // const verified = getCookie('verified');
   const store = useStore();
   const [loading, setLoading] = useState(false);
@@ -37,9 +38,13 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         </Alert>
       )}
       <Header />
-      {children}
+      {container ? <Container>{children}</Container> : children}
     </div>
   );
+};
+
+Layout.defaultProps = {
+  container: true,
 };
 
 export default Layout;

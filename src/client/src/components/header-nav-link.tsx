@@ -15,12 +15,13 @@ function HeaderNavLink(props: HTMLChakraProps<'a'>) {
         aria-current={isActive ? 'page' : undefined}
         display="block"
         py="1"
-        px="3"
+        px={[1, 1.5, 2, 2.5, , 3]}
         borderRadius="full"
         transition="all 0.3s"
         color={useColorModeValue('gray.600', 'whiteAlpha.800')}
         fontWeight="normal"
         _hover={{ bg: useColorModeValue('gray.100', 'whiteAlpha.100') }}
+        fontSize={['small', 'medium', 'large']}
         _activeLink={{
           fontWeight: 'semibold',
           color: 'primary.500',

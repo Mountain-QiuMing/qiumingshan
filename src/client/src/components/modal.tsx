@@ -15,16 +15,17 @@ interface ModalProps {
   onOpen: () => void;
   onOk?: () => void;
   onClose: () => void;
+  title?: string;
   children: ReactNode;
 }
 
 export const MyModal = (props: ModalProps) => {
-  const { children, ...modalProps } = props;
+  const { title, children, ...modalProps } = props;
   return (
     <Modal {...modalProps}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Modal Title</ModalHeader>
+        {title && <ModalHeader>{title}</ModalHeader>}
         <ModalCloseButton />
         <ModalBody>{children}</ModalBody>
 
