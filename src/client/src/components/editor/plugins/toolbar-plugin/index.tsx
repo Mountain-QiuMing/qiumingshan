@@ -10,10 +10,13 @@ import {
   FORMAT_ELEMENT_COMMAND,
   $getSelection,
   $isRangeSelection,
-  $createParagraphNode,
   $getNodeByKey,
   OUTDENT_CONTENT_COMMAND,
   INDENT_CONTENT_COMMAND,
+  TextNode,
+  RangeSelection,
+  ElementNode,
+  COMMAND_PRIORITY_CRITICAL,
 } from 'lexical';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import {
@@ -31,13 +34,11 @@ import {
   ListNode,
   INSERT_CHECK_LIST_COMMAND,
 } from '@lexical/list';
-import { $createHeadingNode, $createQuoteNode, $isHeadingNode, HeadingTagType } from '@lexical/rich-text';
-import { $createCodeNode, $isCodeNode, getDefaultCodeLanguage, getCodeLanguages } from '@lexical/code';
+import { $createQuoteNode, $isHeadingNode } from '@lexical/rich-text';
+import { $createCodeNode, $isCodeNode, getCodeLanguages } from '@lexical/code';
 import {
   Box,
   Button,
-  // ColorPicker,
-  // ConfigProviderProps,
   Divider,
   IconButton,
   Menu,
@@ -48,6 +49,7 @@ import {
   MenuList,
   Select,
   Tooltip,
+  useDisclosure,
 } from '@chakra-ui/react';
 import {
   AddBoxLineIcon,
@@ -92,97 +94,28 @@ import InsetNetEastMusicDialog from '../toolbar-plugin/insert-neteast-music';
 import LinkEditor from '../../components/link-editor';
 import EquationModal from '../../components/equation-modal';
 import codeBlockThemes from '../../themes/code-block-themes';
-import ColorPicker from '../../../color-picker';
-
-const LowPriority = 1;
+import ColorPicker from '@/components/color-picker';
+import InsertBlock from './inset-block';
 
 const supportedBlockTypes = new Set(['paragraph', 'quote', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'ul', 'ol']);
 
 const fontSizeList = ['12px', '13px', '14px', '15px', '16px', '18px', '20px', '24px', '28px', '30px', '32px', '40px'];
 
-function getSelectedNode(selection) {
+function getSelectedNode(selection: RangeSelection): TextNode | ElementNode {
   const anchor = selection.anchor;
   const focus = selection.focus;
   const anchorNode = selection.anchor.getNode();
   const focusNode = selection.focus.getNode();
-
   if (anchorNode === focusNode) {
     return anchorNode;
   }
   const isBackward = selection.isBackward();
-
   if (isBackward) {
     return $isAtNodeEnd(focus) ? anchorNode : focusNode;
   } else {
     return $isAtNodeEnd(anchor) ? focusNode : anchorNode;
   }
 }
-
-function BlockOptionsDropdownList({ editor, blockType, setBlockType }) {
-  const formatParagraph = () => {
-    if (blockType !== 'paragraph') {
-      editor.update(() => {
-        const selection = $getSelection();
-
-        if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createParagraphNode());
-        }
-      });
-    }
-  };
-
-  const formatHeading = (headingType: HeadingTagType) => {
-    if (blockType !== headingType) {
-      editor.update(() => {
-        const selection = $getSelection();
-
-        if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createHeadingNode(headingType));
-        }
-      });
-    }
-  };
-
-  const typeMap = {
-    paragraph: formatParagraph,
-    h1: () => formatHeading('h1'),
-    h2: () => formatHeading('h2'),
-    h3: () => formatHeading('h3'),
-    h4: () => formatHeading('h4'),
-  };
-
-  const onChangeBlockType = (e: ChangeEvent<HTMLSelectElement>) => {
-    const type = e.target.value;
-    setBlockType(type);
-    typeMap[type]();
-  };
-
-  return (
-    <Select
-      css={blockSelectStyle}
-      value={Object.keys(typeMap).includes(blockType) ? blockType : 'paragraph'}
-      onChange={onChangeBlockType}
-      width={20}
-    >
-      <option label="正文" value="paragraph"></option>
-      <option label="标题1" value="h1"></option>
-      <option label="标题2" value="h2"></option>
-      <option label="标题3" value="h3"></option>
-      <option label="标题4" value="h4"></option>
-    </Select>
-  );
-}
-
-const blockSelectStyle = css`
-  .ultra-select-option,
-  .ultra-select__selection {
-    display: flex;
-    align-items: center;
-    .ultra-icon {
-      margin-right: 10px;
-    }
-  }
-`;
 
 const codeBlockThemeList = Object.keys(codeBlockThemes);
 
@@ -193,8 +126,8 @@ export default function ToolbarPlugin() {
   const [canRedo, setCanRedo] = useState(false);
   const [blockType, setBlockType] = useState('paragraph');
   const [fontSize, setFontSize] = useState('14px');
-  const [fontColor, setFontColor] = useState('#000');
-  const [fontBgColor, setFontBgColor] = useState('#fff');
+  const [fontColor, setFontColor] = useState('inherit');
+  const [fontBgColor, setFontBgColor] = useState('inherit');
   const [selectedElementKey, setSelectedElementKey] = useState(null);
   const [codeLanguage, setCodeLanguage] = useState('');
   const [codeTheme, setCodeTheme] = useState<keyof typeof codeBlockThemes>('atom-one-dark');
@@ -203,105 +136,102 @@ export default function ToolbarPlugin() {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
-  const [insertImageModalVisible, setInsertImageModalVisible] = useState(false);
-  const [insertTableModalVisible, setInsertTableModalVisible] = useState(false);
-  const [equationVisible, setEquationVisible] = useState(false);
-  const [insertPollModalVisible, setInsertPollModalVisible] = useState(false);
-  const [insertNeteastMusicModalVisible, setInsertNeteastMusicModalVisible] = useState(false);
+  const insertImageModalState = useDisclosure();
+  const insertTableModalState = useDisclosure();
+  const insertEquationModalState = useDisclosure();
+  const insertPollModalState = useDisclosure();
+  const insertNeteastMusicModalState = useDisclosure();
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
-
     if ($isRangeSelection(selection)) {
       const anchorNode = selection.anchor.getNode();
       const element = anchorNode.getKey() === 'root' ? anchorNode : anchorNode.getTopLevelElementOrThrow();
       const elementKey = element.getKey();
       const elementDOM = editor.getElementByKey(elementKey);
 
-      if (elementDOM !== null) {
-        setSelectedElementKey(elementKey);
-        if ($isListNode(element)) {
-          const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode);
-          const type = parentList ? parentList.getListType() : element.getListType();
-
-          setBlockType(type);
-        } else {
-          const type = $isHeadingNode(element) ? element.getTag() : element.getType();
-
-          setBlockType(type);
-          if ($isCodeNode(element)) {
-            setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
-          }
-        }
-      }
-
       setIsBold(selection.hasFormat('bold'));
-      setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '14px'));
-      setFontColor($getSelectionStyleValueForProperty(selection, 'color', fontColor));
-      setFontBgColor($getSelectionStyleValueForProperty(selection, 'background-color', fontBgColor));
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
       setIsStrikethrough(selection.hasFormat('strikethrough'));
 
       const node = getSelectedNode(selection);
       const parent = node.getParent();
-
       if ($isLinkNode(parent) || $isLinkNode(node)) {
         setIsLink(true);
       } else {
         setIsLink(false);
       }
+
+      if (elementDOM !== null) {
+        setSelectedElementKey(elementKey);
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode);
+          const type = parentList ? parentList.getListType() : element.getListType();
+          setBlockType(type);
+        } else {
+          const type = $isHeadingNode(element) ? element.getTag() : element.getType();
+          setBlockType(type);
+          if ($isCodeNode(element)) {
+            const language = element.getLanguage();
+            setCodeLanguage(language || '');
+            return;
+          }
+        }
+      }
+
+      setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '15px'));
+      setFontColor($getSelectionStyleValueForProperty(selection, 'color', '#000'));
+      setFontBgColor($getSelectionStyleValueForProperty(selection, 'background-color', '#fff'));
+      // setFontFamily($getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'));
     }
   }, [editor]);
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
+    return editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      _payload => {
         updateToolbar();
-      });
-    });
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL,
+    );
   }, [editor, updateToolbar]);
 
   useEffect(() => {
     return mergeRegister(
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        _payload => {
+      editor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
           updateToolbar();
-
-          return false;
-        },
-        LowPriority,
-      ),
+        });
+      }),
       editor.registerCommand<boolean>(
         CAN_UNDO_COMMAND,
         payload => {
           setCanUndo(payload);
-
           return false;
         },
-        LowPriority,
+        COMMAND_PRIORITY_CRITICAL,
       ),
       editor.registerCommand<boolean>(
         CAN_REDO_COMMAND,
         payload => {
           setCanRedo(payload);
-
           return false;
         },
-        LowPriority,
+        COMMAND_PRIORITY_CRITICAL,
       ),
     );
   }, [editor, updateToolbar]);
 
   const onCodeLanguageSelect = useCallback(
-    value => {
+    (e: ChangeEvent<HTMLSelectElement>) => {
       editor.update(() => {
         if (selectedElementKey !== null) {
           const node = $getNodeByKey(selectedElementKey);
 
           if ($isCodeNode(node)) {
-            node.setLanguage(value);
+            node.setLanguage(e.target.value);
           }
         }
       });
@@ -357,7 +287,14 @@ export default function ToolbarPlugin() {
         const selection = $getSelection();
 
         if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createCodeNode());
+          if (selection.isCollapsed()) {
+            $wrapLeafNodesInElements(selection, () => $createCodeNode());
+          } else {
+            const textContent = selection.getTextContent();
+            const codeNode = $createCodeNode();
+            selection.insertNodes([codeNode]);
+            selection.insertRawText(textContent);
+          }
         }
       });
     }
@@ -365,17 +302,17 @@ export default function ToolbarPlugin() {
 
   const formatBulletList = () => {
     if (blockType !== 'ul') {
-      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, {});
+      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
     } else {
-      editor.dispatchCommand(REMOVE_LIST_COMMAND, {});
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     }
   };
 
   const formatNumberedList = () => {
     if (blockType !== 'ol') {
-      editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, {});
+      editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
     } else {
-      editor.dispatchCommand(REMOVE_LIST_COMMAND, {});
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     }
   };
 
@@ -410,88 +347,54 @@ export default function ToolbarPlugin() {
         `}
       ></Global>
 
-      <InsetImageDialog visible={insertImageModalVisible} onVisibleChange={setInsertImageModalVisible} />
-      <InsetTableDialog visible={insertTableModalVisible} onVisibleChange={setInsertTableModalVisible} />
-      <InsetPollDialog visible={insertPollModalVisible} onVisibleChange={setInsertPollModalVisible} />
-      <InsetNetEastMusicDialog
-        visible={insertNeteastMusicModalVisible}
-        onVisibleChange={setInsertNeteastMusicModalVisible}
-      />
-      <EquationModal visible={equationVisible} onVisibleChange={setEquationVisible} />
+      <InsetImageDialog {...insertImageModalState} />
+      <InsetTableDialog {...insertTableModalState} />
+      <InsetPollDialog {...insertPollModalState} />
+      <InsetNetEastMusicDialog {...insertNeteastMusicModalState} />
+      <EquationModal {...insertEquationModalState} />
 
       <Menu>
         <MenuButton as={Button} className="toolbar-item" variant="outline" leftIcon={<AddBoxLineIcon />}>
           插入
         </MenuButton>
         <MenuList>
-          <>
-            <MenuItem onClick={inSertCodeBlock} icon={<CodeSSlashLineIcon />}>
-              代码块
+          <MenuItem onClick={inSertCodeBlock} icon={<CodeSSlashLineIcon />}>
+            代码块
+          </MenuItem>
+          <MenuItem onClick={insertImageModalState.onOpen} icon={<ImageLineIcon />}>
+            图片
+          </MenuItem>
+          <MenuItem
+            icon={<DrawImageIcon />}
+            onClick={() => {
+              editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined);
+            }}
+          >
+            画板
+          </MenuItem>
+          <MenuItem icon={<FormulaIcon />} onClick={insertEquationModalState.onOpen}>
+            公式
+          </MenuItem>
+          <MenuItem
+            icon={<CheckboxLineIcon />}
+            onClick={() => {
+              editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
+            }}
+          >
+            待办事项
+          </MenuItem>
+          <MenuItem icon={<Table2Icon />} onClick={insertTableModalState.onOpen}>
+            表格
+          </MenuItem>
+          <MenuItem icon={<PollIcon />} onClick={insertPollModalState.onOpen}>
+            投票
+          </MenuItem>
+          <MenuDivider />
+          <MenuGroup title="插入第三方服务">
+            <MenuItem icon={<NeteaseCloudMusicFillIcon />} onClick={insertNeteastMusicModalState.onOpen}>
+              网易云音乐
             </MenuItem>
-            <MenuItem onClick={() => setInsertImageModalVisible(true)} icon={<ImageLineIcon />}>
-              图片
-            </MenuItem>
-            <MenuItem
-              icon={<DrawImageIcon />}
-              onClick={() => {
-                editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, {});
-              }}
-            >
-              画板
-            </MenuItem>
-            <MenuItem icon={<FormulaIcon />} onClick={() => setEquationVisible(true)}>
-              公式
-            </MenuItem>
-            <MenuItem
-              icon={<CheckboxLineIcon />}
-              onClick={() => {
-                editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, {});
-              }}
-            >
-              待办事项
-            </MenuItem>
-            <MenuItem icon={<Table2Icon />} onClick={() => setInsertImageModalVisible(true)}>
-              表格
-            </MenuItem>
-            <MenuItem icon={<PollIcon />} onClick={() => setInsertPollModalVisible(true)}>
-              投票
-            </MenuItem>
-            <MenuDivider />
-            <MenuGroup title="插入第三方服务">
-              <MenuItem
-                onClick={() => {
-                  // Modal.confirm({
-                  //   title: '网易云音乐',
-                  //   content: (
-                  //     <Input
-                  //       style={{ width: 300 }}
-                  //       label="网易云音乐链接"
-                  //       defaultValue="https://music.163.com/#/song?id=1945895585"
-                  //       ref={neteastMusicRef}
-                  //       placeholder="https://music.163.com/#/song?id=1945895585"
-                  //     />
-                  //   ),
-                  //   onOk: () => {
-                  //     const url = neteastMusicRef.current.value;
-                  //     if (!url) {
-                  //       neteastMusicRef.current.focus();
-                  //       return false;
-                  //     }
-                  //     const id = getUrlParam('id', url);
-                  //     if (!id) {
-                  //       return false;
-                  //     }
-                  //     console.log(id);
-                  //     editor.dispatchCommand(INSERT_NETEAST_MUSIC_COMMAND, id);
-                  //   },
-                  // });
-                }}
-              >
-                <NeteaseCloudMusicFillIcon />
-                <span>网易云音乐</span>
-              </MenuItem>
-            </MenuGroup>
-          </>
+          </MenuGroup>
         </MenuList>
       </Menu>
       <Divider orientation="vertical" />
@@ -501,7 +404,7 @@ export default function ToolbarPlugin() {
         className="toolbar-item spaced"
         isDisabled={!canUndo}
         onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND, {});
+          editor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
       ></IconButton>
 
@@ -510,7 +413,7 @@ export default function ToolbarPlugin() {
         icon={<ArrowGoForwardLineIcon />}
         isDisabled={!canRedo}
         onClick={() => {
-          editor.dispatchCommand(REDO_COMMAND, {});
+          editor.dispatchCommand(REDO_COMMAND, undefined);
         }}
         className="toolbar-item"
       />
@@ -539,7 +442,7 @@ export default function ToolbarPlugin() {
           <Divider orientation="vertical" />
           {supportedBlockTypes.has(blockType) && (
             <>
-              <BlockOptionsDropdownList editor={editor} blockType={blockType} setBlockType={setBlockType} />
+              <InsertBlock blockType={blockType} setBlockType={setBlockType} />
               <Divider orientation="vertical" />
             </>
           )}
@@ -694,14 +597,20 @@ export default function ToolbarPlugin() {
               icon={<SeparatorIcon />}
               className="toolbar-item"
               onClick={() => {
-                editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, {});
+                editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
               }}
             ></IconButton>
           </Tooltip>
           <Divider orientation="vertical" />
           <Menu>
-            <MenuButton as={Button} leftIcon={<AlignLeftIcon />} variant="outline" className="toolbar-item">
-              <span>对齐方式</span>
+            <MenuButton
+              as={Button}
+              leftIcon={<AlignLeftIcon />}
+              aria-label="对齐方式"
+              variant="outline"
+              className="toolbar-item"
+            >
+              对齐方式
             </MenuButton>
             <MenuList>
               <MenuItem icon={<AlignLeftIcon />} onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left')}>
@@ -728,13 +637,13 @@ export default function ToolbarPlugin() {
               <Divider />
               <MenuItem
                 icon={<IndentDecreaseIcon />}
-                onClick={() => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, {})}
+                onClick={() => editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined)}
               >
                 <span>左缩进</span>
               </MenuItem>
               <MenuItem
                 icon={<IndentIncreaseIcon />}
-                onClick={() => editor.dispatchCommand(INDENT_CONTENT_COMMAND, {})}
+                onClick={() => editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined)}
               >
                 <span>右缩进</span>
               </MenuItem>

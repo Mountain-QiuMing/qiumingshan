@@ -1,44 +1,22 @@
 import Excalidraw from '@excalidraw/excalidraw';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
-import { useEffect, useRef, useState } from 'react';
-import { Modal } from '@chakra-ui/react';
+import { FC, useEffect, useRef, useState } from 'react';
+import { UseDisclosureReturn } from '@chakra-ui/react';
+import { MyModal } from '../../../modal';
 
 export type ExcalidrawElementFragment = {
   isDeleted?: boolean;
 };
 
-type Props = {
-  closeOnClickOutside?: boolean;
-  /**
-   * The initial set of elements to draw into the scene
-   */
+interface ExcalidrawModalProps extends UseDisclosureReturn {
   initialElements: ReadonlyArray<ExcalidrawElementFragment>;
-  /**
-   * Controls the visibility of the modal
-   */
-  isShown?: boolean;
-  /**
-   * Completely remove Excalidraw component
-   */
   onDelete: () => void;
-  /**
-   * Handle modal closing
-   */
   onHide: () => void;
-  /**
-   * Callback when the save button is clicked
-   */
   onSave: (elements: ReadonlyArray<ExcalidrawElementFragment>) => void;
-};
+}
 
-export default function ExcalidrawModal({
-  // closeOnClickOutside = false,
-  onSave,
-  initialElements,
-  isShown = false,
-  onHide,
-  onDelete,
-}: Props) {
+const ExcalidrawModal: FC<ExcalidrawModalProps> = props => {
+  const { onSave, initialElements, onDelete, ...modalState } = props;
   const excalidrawRef = useRef(null);
   const excaliDrawModelRef = useRef(null);
   const [elements, setElements] = useState<ReadonlyArray<ExcalidrawElementFragment>>(initialElements);
@@ -55,7 +33,7 @@ export default function ExcalidrawModal({
     } else {
       onDelete();
     }
-    onHide();
+    props.onHide();
   };
 
   const discard = () => {
@@ -78,7 +56,7 @@ export default function ExcalidrawModal({
     excalidrawRef?.current?.updateScene({ elements: initialElements });
   }, [initialElements]);
 
-  if (isShown === false) {
+  if (modalState.isOpen === false) {
     return null;
   }
 
@@ -86,20 +64,20 @@ export default function ExcalidrawModal({
     setElements(els);
   };
 
-  return null;
+  return (
+    <MyModal onOk={save} {...modalState} onClose={discard} size="6xl" closeOnOverlayClick={false}>
+      <div style={{ height: '70vh' }}>
+        <Excalidraw
+          langCode="zh-CN"
+          onChange={onChange}
+          initialData={{
+            appState: { isLoading: false },
+            elements: initialElements as ExcalidrawElement[],
+          }}
+        />
+      </div>
+    </MyModal>
+  );
+};
 
-  // return (
-  //   <Modal  visible={isShown} onOk={save} cancelButton={{ children: '撤销' }} onClose={discard}>
-  //     <div style={{ height: '70vh' }}>
-  //       <Excalidraw
-  //         langCode="zh-CN"
-  //         onChange={onChange}
-  //         initialData={{
-  //           appState: { isLoading: false },
-  //           elements: initialElements as ExcalidrawElement[],
-  //         }}
-  //       />
-  //     </div>
-  //   </Modal>
-  // );
-}
+export default ExcalidrawModal;

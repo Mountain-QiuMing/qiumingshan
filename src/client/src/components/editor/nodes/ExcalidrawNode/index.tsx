@@ -27,13 +27,14 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ImageResizer from '../../components/ImageResizer';
 import dynamic from 'next/dynamic';
+import { useDisclosure } from '@chakra-ui/react';
 
 const ExcalidrawModal = dynamic(() => import('./excalidraw-modal'), { ssr: false });
 const ExcalidrawImage = dynamic(() => import('./excalidraw-image'), { ssr: false });
 
 function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey }): JSX.Element {
   const [editor] = useLexicalComposerContext();
-  const [isModalOpen, setModalOpen] = useState<boolean>(data === '[]' && !editor.isReadOnly());
+  const modalState = useDisclosure({ isOpen: data === '[]' && !editor.isReadOnly() });
   const imageContainerRef = useRef<HTMLImageElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
@@ -56,14 +57,13 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
     [editor, isSelected, nodeKey, setSelected],
   );
 
-  // Set editor to readOnly if excalidraw is open to prevent unwanted changes
   useEffect(() => {
-    if (isModalOpen) {
+    if (modalState.isOpen) {
       editor.setReadOnly(true);
     } else {
       editor.setReadOnly(false);
     }
-  }, [isModalOpen, editor]);
+  }, [modalState.isOpen, editor]);
 
   useEffect(() => {
     return mergeRegister(
@@ -83,7 +83,7 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
             }
             setSelected(!isSelected);
             if (event.detail > 1) {
-              setModalOpen(true);
+              modalState.onOpen();
             }
             return true;
           }
@@ -98,7 +98,7 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
   }, [clearSelection, editor, isSelected, isResizing, onDelete, setSelected]);
 
   const deleteNode = useCallback(() => {
-    setModalOpen(false);
+    modalState.onClose();
     return editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isExcalidrawNode(node)) {
@@ -128,7 +128,6 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
   };
 
   const onResizeEnd = () => {
-    // Delay hiding the resize bars for click case
     setTimeout(() => {
       setIsResizing(false);
     }, 200);
@@ -139,18 +138,17 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
     <>
       <ExcalidrawModal
         initialElements={elements}
-        isShown={isModalOpen}
         onDelete={deleteNode}
         onHide={() => {
           editor.setReadOnly(false);
-          setModalOpen(false);
+          modalState.onClose();
         }}
         onSave={newData => {
           editor.setReadOnly(false);
           setData(newData);
-          setModalOpen(false);
+          modalState.onClose();
         }}
-        closeOnClickOutside={true}
+        {...modalState}
       />
       {elements.length > 0 && (
         <button ref={buttonRef} className={`excalidraw-button ${isSelected ? 'selected' : ''}`}>
@@ -220,7 +218,6 @@ export class ExcalidrawNode extends DecoratorNode<JSX.Element> {
     this.__data = data;
   }
 
-  // View
   createDOM(config: EditorConfig): HTMLElement {
     const span = document.createElement('span');
     const theme = config.theme;

@@ -1,9 +1,9 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createHorizontalRuleNode, INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR } from 'lexical';
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 
-const HorizontalRulePlugin: FC = () => {
+export default function HorizontalRulePlugin(): null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -20,7 +20,6 @@ const HorizontalRulePlugin: FC = () => {
 
         if (focusNode !== null) {
           const horizontalRuleNode = $createHorizontalRuleNode();
-
           selection.insertParagraph();
           selection.focus.getNode().getTopLevelElementOrThrow().insertBefore(horizontalRuleNode);
         }
@@ -32,6 +31,4 @@ const HorizontalRulePlugin: FC = () => {
   }, [editor]);
 
   return null;
-};
-
-export default HorizontalRulePlugin;
+}

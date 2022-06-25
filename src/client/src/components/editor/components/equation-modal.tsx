@@ -1,35 +1,32 @@
 import { css } from '@emotion/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { FC, useState } from 'react';
-import { Checkbox, Input, ModalHeader, Textarea, useDisclosure } from '@chakra-ui/react';
+import { Checkbox, Input, ModalHeader, Textarea, UseDisclosureReturn } from '@chakra-ui/react';
 import { INSERT_EQUATION_COMMAND } from '../plugins/equations-plugin';
 import KatexRenderer from './katex-renderer';
 import { MyModal } from '../../modal';
 
-type Props = {
-  visible: boolean;
-  onVisibleChange: (visible: boolean) => void;
+interface EquationModalProps extends UseDisclosureReturn {
   onSubmit?: (equation: string) => void;
   inline?: boolean;
   equation?: string;
-};
+}
 
-const EquationModal: FC<Props> = props => {
-  const { visible, onVisibleChange, onSubmit, inline: defaultInline, equation: defaultEquation } = props;
+const EquationModal: FC<EquationModalProps> = props => {
+  const { onSubmit, inline: defaultInline, equation: defaultEquation, ...rest } = props;
   const [editor] = useLexicalComposerContext();
 
   const [equation, setEquation] = useState<string>(defaultEquation || '');
   const [inline, setInline] = useState<boolean>(defaultInline || true);
-  const modalState = useDisclosure({ isOpen: visible });
 
   const onOk = () => {
     editor.dispatchCommand(INSERT_EQUATION_COMMAND, { equation, inline });
     onSubmit?.(equation);
-    onVisibleChange(false);
+    props.onClose();
   };
 
   return (
-    <MyModal css={equationModalStyle} {...modalState} onOk={onOk}>
+    <MyModal css={equationModalStyle} {...rest} onOk={onOk}>
       <ModalHeader>{`${defaultEquation ? '编辑' : '插入'}公式`}</ModalHeader>
       <div className="KatexEquationAlterer_inline-checkbox">
         <Checkbox checked={inline} onChange={e => setInline(e.target.checked)}>

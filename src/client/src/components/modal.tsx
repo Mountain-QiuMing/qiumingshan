@@ -7,19 +7,17 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  ModalProps,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-interface ModalProps {
-  isOpen: boolean;
-  onOpen: () => void;
+interface MyModalProps extends ModalProps {
   onOk?: () => void;
-  onClose: () => void;
   title?: string;
   children: ReactNode;
 }
 
-export const MyModal = (props: ModalProps) => {
+export const MyModal = (props: MyModalProps) => {
   const { title, children, ...modalProps } = props;
   return (
     <Modal {...modalProps}>
@@ -30,10 +28,10 @@ export const MyModal = (props: ModalProps) => {
         <ModalBody>{children}</ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={props.onClose}>
+          <Button mr={3} onClick={props.onClose}>
             取消
           </Button>
-          <Button variant="ghost" onClick={props.onOk}>
+          <Button colorScheme="primary" onClick={props.onOk}>
             确定
           </Button>
         </ModalFooter>

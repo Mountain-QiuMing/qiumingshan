@@ -269,7 +269,7 @@ const imageResizerStyle = theme => css`
     width: 7px;
     height: 7px;
     position: absolute;
-    /* background-color: ${ultraContext.theme.style.primaryColor}; */
+    background-color: var(--ck-colors-primary-500);
     border: 1px solid #fff;
   }
 

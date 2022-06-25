@@ -1,21 +1,16 @@
 import { css } from '@emotion/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { FC, useState, useRef } from 'react';
-import { Tabs, Button, Input, useDisclosure, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
+import { Tabs, Button, Input, TabList, Tab, TabPanels, TabPanel, UseDisclosureReturn } from '@chakra-ui/react';
 import { useEditorPropsContext } from '../../context/editor-props-context';
 import { InsertImagePayload, INSERT_IMAGE_COMMAND } from '../images-plugin';
 import { toast } from '../../../../utils/toast';
 import { MyModal } from '../../../modal';
 import Upload, { UploadRef } from '../../../upload';
 
-interface InsertImageDialogProps {
-  visible: boolean;
-  onVisibleChange: (visible: boolean) => void;
-}
+interface InsertImageDialogProps extends UseDisclosureReturn {}
 
 const InsetImageDialog: FC<InsertImageDialogProps> = props => {
-  const { visible, onVisibleChange } = props;
-  const modalState = useDisclosure({ isOpen: visible });
   const [editor] = useLexicalComposerContext();
   const { handleUploadImages } = useEditorPropsContext();
   const [currentTab, setCurrentTab] = useState(0);
@@ -55,7 +50,7 @@ const InsetImageDialog: FC<InsertImageDialogProps> = props => {
       editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
     });
 
-    onVisibleChange(false);
+    props.onClose();
   };
 
   const startUpload = async () => {
@@ -69,7 +64,7 @@ const InsetImageDialog: FC<InsertImageDialogProps> = props => {
   };
 
   return (
-    <MyModal css={insetImageDialogStyles} onOk={onSubmitImage} title="插入图片" {...modalState}>
+    <MyModal css={insetImageDialogStyles} onOk={onSubmitImage} title="插入图片" {...props}>
       <Tabs onChange={e => setCurrentTab(e)}>
         <TabList>
           <Tab>本地图片</Tab>

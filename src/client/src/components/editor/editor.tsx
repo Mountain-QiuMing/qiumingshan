@@ -400,5 +400,9 @@ const rootEditorStyle = () => {
       outline: 2px solid var(--ck-colors-primary-500);
       user-select: none;
     }
+
+    hr {
+      margin: 0.5em 0;
+    }
   `;
 };

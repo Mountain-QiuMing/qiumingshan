@@ -1,21 +1,16 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { FC, useState } from 'react';
-import { NumberInput, useDisclosure } from '@chakra-ui/react';
+import { NumberInput, UseDisclosureReturn } from '@chakra-ui/react';
 import { toast } from '@/utils/toast';
 import { MyModal } from '@/components/modal';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 
-interface InsertTableDialogProps {
-  visible: boolean;
-  onVisibleChange: (visible: boolean) => void;
-}
+interface InsertTableDialogProps extends UseDisclosureReturn {}
 
 const InsetTableDialog: FC<InsertTableDialogProps> = props => {
-  const { visible, onVisibleChange } = props;
   const [editor] = useLexicalComposerContext();
   const [columns, setColumns] = useState(4);
   const [rows, setRows] = useState(4);
-  const modalState = useDisclosure({ isOpen: visible });
 
   const onSubmitImage = async () => {
     const r = typeof rows === 'number' && rows >= 2 ? rows : 4;
@@ -29,11 +24,11 @@ const InsetTableDialog: FC<InsertTableDialogProps> = props => {
       return false;
     }
     editor.dispatchCommand(INSERT_TABLE_COMMAND, { rows: r, columns: c });
-    onVisibleChange(false);
+    props.onClose();
   };
 
   return (
-    <MyModal onOk={onSubmitImage} title="插入表格" {...modalState}>
+    <MyModal onOk={onSubmitImage} title="插入表格" {...props}>
       <NumberInput key="1" placeholder="行数" value={rows} onChange={(_, e) => setRows(e)} />
       <NumberInput key="2" placeholder="列数" value={columns} onChange={(_, e) => setColumns(e)} />
     </MyModal>
