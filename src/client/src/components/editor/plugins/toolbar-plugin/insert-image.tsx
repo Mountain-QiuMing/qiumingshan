@@ -1,104 +1,106 @@
-// import { css } from '@emotion/react';
-// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-// import { FC, useState, useRef } from 'react';
-// import { Toast, Modal, Tabs, Upload, Button, Input } from '@chakra-ui/react';
-// import { useEditorPropsContext } from '../../context/editor-props-context';
-// import { InsertImagePayload, INSERT_IMAGE_COMMAND } from '../images-plugin';
+import { css } from '@emotion/react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { FC, useState, useRef } from 'react';
+import { Tabs, Button, Input, useDisclosure, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react';
+import { useEditorPropsContext } from '../../context/editor-props-context';
+import { InsertImagePayload, INSERT_IMAGE_COMMAND } from '../images-plugin';
+import { toast } from '../../../../utils/toast';
+import { MyModal } from '../../../modal';
+import Upload, { UploadRef } from '../../../upload';
 
-// interface InsertImageDialogProps {
-//   visible: boolean;
-//   onVisibleChange: (visible: boolean) => void;
-// }
+interface InsertImageDialogProps {
+  visible: boolean;
+  onVisibleChange: (visible: boolean) => void;
+}
 
-// const InsetImageDialog: FC<InsertImageDialogProps> = props => {
-//   const { visible, onVisibleChange } = props;
-//   const [editor] = useLexicalComposerContext();
-//   const { handleUploadImages } = useEditorPropsContext();
-//   const [currentTab, setCurrentTab] = useState('local');
-//   const [removeImageList, setRemoveImageList] = useState<{ src: string }[]>([]);
-//   const [fileList, setFileList] = useState<UploadRef['imageList']>([]);
-//   const removeUrlRef = useRef<HTMLInputElement>();
+const InsetImageDialog: FC<InsertImageDialogProps> = props => {
+  const { visible, onVisibleChange } = props;
+  const modalState = useDisclosure({ isOpen: visible });
+  const [editor] = useLexicalComposerContext();
+  const { handleUploadImages } = useEditorPropsContext();
+  const [currentTab, setCurrentTab] = useState(0);
+  const [removeImageList, setRemoveImageList] = useState<{ src: string }[]>([]);
+  const [fileList, setFileList] = useState<UploadRef['imageList']>([]);
+  const removeUrlRef = useRef<HTMLInputElement>();
 
-//   const onSubmitImage = async () => {
-//     let insertImages = [];
+  const onSubmitImage = async () => {
+    let insertImages = [];
 
-//     if (currentTab === 'remote') {
-//       const removeUrl = removeUrlRef.current.value;
+    if (currentTab === 1) {
+      const removeUrl = removeUrlRef.current.value;
 
-//       if (!removeUrl) {
-//         return removeUrlRef.current.focus();
-//       }
-//       insertImages = [{ src: removeUrl, altText: '' }];
-//     } else if (currentTab === 'local') {
-//       if (!fileList.length) {
-//         return Toast.warning('请选择图片');
-//       }
+      if (!removeUrl) {
+        return removeUrlRef.current.focus();
+      }
+      insertImages = [{ src: removeUrl, altText: '' }];
+    } else if (currentTab === 0) {
+      if (!fileList.length) {
+        return toast.warning('请选择图片');
+      }
 
-//       if (!handleUploadImages) {
-//         insertImages = fileList.map(img => ({ src: img.url, altText: '' }));
-//         insertImage(insertImages);
-//       } else {
-//         if (!removeImageList.length) {
-//           return Toast.warning('请上传图片');
-//         }
-//         insertImage(removeImageList.map(img => ({ src: img.src, altText: '' })));
-//       }
-//     }
-//   };
+      if (!handleUploadImages) {
+        insertImages = fileList.map(img => ({ src: img.url, altText: '' }));
+        insertImage(insertImages);
+      } else {
+        if (!removeImageList.length) {
+          return toast.warning('请上传图片');
+        }
+        insertImage(removeImageList.map(img => ({ src: img.src, altText: '' })));
+      }
+    }
+  };
 
-//   const insertImage = (payloads: InsertImagePayload[]) => {
-//     payloads.forEach(payload => {
-//       editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
-//     });
+  const insertImage = (payloads: InsertImagePayload[]) => {
+    payloads.forEach(payload => {
+      editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
+    });
 
-//     onVisibleChange(false);
-//   };
+    onVisibleChange(false);
+  };
 
-//   const startUpload = async () => {
-//     try {
-//       const remoteImages = await handleUploadImages(fileList);
+  const startUpload = async () => {
+    try {
+      const remoteImages = await handleUploadImages(fileList);
 
-//       setRemoveImageList(remoteImages);
-//     } catch (e) {
-//       throw new Error(e);
-//     }
-//   };
+      setRemoveImageList(remoteImages);
+    } catch (e) {
+      throw new Error(e);
+    }
+  };
 
-//   return (
-//     <Modal
-//       css={insetImageDialogStyles}
-//       visible={visible}
-//       onClose={() => onVisibleChange(false)}
-//       onOk={onSubmitImage}
-//       title="插入图片"
-//     >
-//       <Tabs value={currentTab} onChange={tab => setCurrentTab(tab)}>
-//         <Tabs.Item label="本地图片" value="local">
-//           <Upload fileList={fileList} onChange={files => setFileList(files)} />
-//           {typeof handleUploadImages === 'function' && (
-//             <Button disabled={!fileList.length} type="primary" className="start-upload-btn" onClick={startUpload}>
-//               开始上传
-//             </Button>
-//           )}
-//         </Tabs.Item>
-//         <Tabs.Item label="远程链接" value="remote">
-//           <Input
-//             ref={removeUrlRef}
-//             placeholder="请输入图片地址"
-//             defaultValue="https://static01.imgkr.com/temp/f23eb233e5ec4822a62d98593dd6ece8.png"
-//           />
-//         </Tabs.Item>
-//       </Tabs>
-//     </Modal>
-//   );
-// };
+  return (
+    <MyModal css={insetImageDialogStyles} onOk={onSubmitImage} title="插入图片" {...modalState}>
+      <Tabs onChange={e => setCurrentTab(e)}>
+        <TabList>
+          <Tab>本地图片</Tab>
+          <Tab>远程链接</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <Upload fileList={fileList} onChange={files => setFileList(files)} />
+            {typeof handleUploadImages === 'function' && (
+              <Button disabled={!fileList.length} className="start-upload-btn" onClick={startUpload}>
+                开始上传
+              </Button>
+            )}
+          </TabPanel>
+          <TabPanel>
+            <Input
+              ref={removeUrlRef}
+              placeholder="请输入图片地址"
+              defaultValue="https://static01.imgkr.com/temp/f23eb233e5ec4822a62d98593dd6ece8.png"
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </MyModal>
+  );
+};
 
-// export default InsetImageDialog;
+export default InsetImageDialog;
 
-// const insetImageDialogStyles = css`
-//   .start-upload-btn {
-//     margin-top: 20px;
-//   }
-// `;
-
-export default () => null;
+const insetImageDialogStyles = css`
+  .start-upload-btn {
+    margin-top: 20px;
+  }
+`;

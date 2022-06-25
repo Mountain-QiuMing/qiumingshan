@@ -15,7 +15,6 @@ import {
   OUTDENT_CONTENT_COMMAND,
   INDENT_CONTENT_COMMAND,
 } from 'lexical';
-import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import {
   $getSelectionStyleValueForProperty,
@@ -35,22 +34,20 @@ import {
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode, HeadingTagType } from '@lexical/rich-text';
 import { $createCodeNode, $isCodeNode, getDefaultCodeLanguage, getCodeLanguages } from '@lexical/code';
 import {
+  Box,
   Button,
   // ColorPicker,
   // ConfigProviderProps,
   Divider,
   IconButton,
-  // Dropdown,
-  Input,
   Menu,
   MenuButton,
+  MenuDivider,
+  MenuGroup,
   MenuItem,
   MenuList,
-  Modal,
   Select,
-  Toast,
   Tooltip,
-  useTheme,
 } from '@chakra-ui/react';
 import {
   AddBoxLineIcon,
@@ -60,10 +57,6 @@ import {
   AlignLeftIcon,
   AlignCenterIcon,
   AlignRightIcon,
-  H1Icon,
-  H2Icon,
-  H3Icon,
-  H4Icon,
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
@@ -91,14 +84,15 @@ import {
 } from 'ultra-icon';
 import { css, Global } from '@emotion/react';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
-import { INSERT_EXCALIDRAW_COMMAND } from './excalidraw-plugin';
-import { INSERT_POLL_COMMAND } from './poll-plugin';
-import InsetImageDialog from './toolbar-plugin/insert-image';
-import LinkEditor from '../components/link-editor';
-import { INSERT_NETEAST_MUSIC_COMMAND } from './neteast-music-plugin';
-import getUrlParam from '../utils/get-url-param';
-import EquationModal from '../components/equation-modal';
-import codeBlockThemes from '../themes/code-block-themes';
+import { INSERT_EXCALIDRAW_COMMAND } from '../excalidraw-plugin';
+import InsetImageDialog from '../toolbar-plugin/insert-image';
+import InsetTableDialog from '../toolbar-plugin/insert-table';
+import InsetPollDialog from '../toolbar-plugin/insert-poll';
+import InsetNetEastMusicDialog from '../toolbar-plugin/insert-neteast-music';
+import LinkEditor from '../../components/link-editor';
+import EquationModal from '../../components/equation-modal';
+import codeBlockThemes from '../../themes/code-block-themes';
+import ColorPicker from '../../../color-picker';
 
 const LowPriority = 1;
 
@@ -170,26 +164,11 @@ function BlockOptionsDropdownList({ editor, blockType, setBlockType }) {
       onChange={onChangeBlockType}
       width={20}
     >
-      <option label="正文" value="paragraph">
-        {/* <AlignJustifyIcon />
-        <span className="text">正文</span> */}
-      </option>
-      <option label="标题1" value="h1">
-        {/* <H1Icon />
-        <span className="h1">标题1</span> */}
-      </option>
-      <option label="标题2" value="h2">
-        {/* <H2Icon />
-        <span className="h2">标题2</span> */}
-      </option>
-      <option label="标题3" value="h3">
-        {/* <H3Icon />
-        <span className="h3">标题3</span> */}
-      </option>
-      <option label="标题4" value="h4">
-        {/* <H4Icon />
-        <span className="h4">标题4</span> */}
-      </option>
+      <option label="正文" value="paragraph"></option>
+      <option label="标题1" value="h1"></option>
+      <option label="标题2" value="h2"></option>
+      <option label="标题3" value="h3"></option>
+      <option label="标题4" value="h4"></option>
     </Select>
   );
 }
@@ -208,10 +187,6 @@ const blockSelectStyle = css`
 const codeBlockThemeList = Object.keys(codeBlockThemes);
 
 export default function ToolbarPlugin() {
-  // const { theme } = useUltraContext();
-  // const { primaryColor } = theme.style;
-  // const { textColor } = theme[theme.mode];
-  const theme = useTheme();
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -219,6 +194,7 @@ export default function ToolbarPlugin() {
   const [blockType, setBlockType] = useState('paragraph');
   const [fontSize, setFontSize] = useState('14px');
   const [fontColor, setFontColor] = useState('#000');
+  const [fontBgColor, setFontBgColor] = useState('#fff');
   const [selectedElementKey, setSelectedElementKey] = useState(null);
   const [codeLanguage, setCodeLanguage] = useState('');
   const [codeTheme, setCodeTheme] = useState<keyof typeof codeBlockThemes>('atom-one-dark');
@@ -227,15 +203,11 @@ export default function ToolbarPlugin() {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
-  const [isSubscript, setIsSubscript] = useState(false);
-  const [isSuperscript, setIsSuperscript] = useState(false);
-  const [isCode, setIsCode] = useState(false);
-  const rowsRef = useRef<HTMLInputElement>();
-  const columnsRef = useRef<HTMLInputElement>();
-  const questionRef = useRef<HTMLInputElement>();
-  const [equationVisible, setEquationVisible] = useState(false);
-  const neteastMusicRef = useRef<HTMLInputElement>();
   const [insertImageModalVisible, setInsertImageModalVisible] = useState(false);
+  const [insertTableModalVisible, setInsertTableModalVisible] = useState(false);
+  const [equationVisible, setEquationVisible] = useState(false);
+  const [insertPollModalVisible, setInsertPollModalVisible] = useState(false);
+  const [insertNeteastMusicModalVisible, setInsertNeteastMusicModalVisible] = useState(false);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -266,12 +238,10 @@ export default function ToolbarPlugin() {
       setIsBold(selection.hasFormat('bold'));
       setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '14px'));
       setFontColor($getSelectionStyleValueForProperty(selection, 'color', fontColor));
+      setFontBgColor($getSelectionStyleValueForProperty(selection, 'background-color', fontBgColor));
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
       setIsStrikethrough(selection.hasFormat('strikethrough'));
-      setIsSubscript(selection.hasFormat('subscript'));
-      setIsSuperscript(selection.hasFormat('superscript'));
-      setIsCode(selection.hasFormat('code'));
 
       const node = getSelectedNode(selection);
       const parent = node.getParent();
@@ -368,8 +338,15 @@ export default function ToolbarPlugin() {
   );
 
   const onFontColorSelect = useCallback(
-    value => {
+    (value: string) => {
       applyStyleText({ color: value });
+    },
+    [applyStyleText],
+  );
+
+  const onFontBgColorSelect = useCallback(
+    (value: string) => {
+      applyStyleText({ 'background-color': value });
     },
     [applyStyleText],
   );
@@ -427,142 +404,97 @@ export default function ToolbarPlugin() {
               /* font-size: var(--ck-fontSizes-xs); */
             }
             & + * {
-              margin-left: 8px;
+              margin-left: var(--ck-space-1);
             }
           }
         `}
       ></Global>
 
-      {/* <InsetImageDialog visible={insertImageModalVisible} onVisibleChange={setInsertImageModalVisible} /> */}
+      <InsetImageDialog visible={insertImageModalVisible} onVisibleChange={setInsertImageModalVisible} />
+      <InsetTableDialog visible={insertTableModalVisible} onVisibleChange={setInsertTableModalVisible} />
+      <InsetPollDialog visible={insertPollModalVisible} onVisibleChange={setInsertPollModalVisible} />
+      <InsetNetEastMusicDialog
+        visible={insertNeteastMusicModalVisible}
+        onVisibleChange={setInsertNeteastMusicModalVisible}
+      />
+      <EquationModal visible={equationVisible} onVisibleChange={setEquationVisible} />
 
-      {/* <Dropdown
-        trigger="click"
-        content={
+      <Menu>
+        <MenuButton as={Button} className="toolbar-item" variant="outline" leftIcon={<AddBoxLineIcon />}>
+          插入
+        </MenuButton>
+        <MenuList>
           <>
-            <Dropdown.Item onClick={inSertCodeBlock}>
-              <CodeSSlashLineIcon />
-              <span>代码块</span>
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => setInsertImageModalVisible(true)}>
-              <ImageLineIcon />
-              <span>图片</span>
-            </Dropdown.Item>
-            <Dropdown.Item
+            <MenuItem onClick={inSertCodeBlock} icon={<CodeSSlashLineIcon />}>
+              代码块
+            </MenuItem>
+            <MenuItem onClick={() => setInsertImageModalVisible(true)} icon={<ImageLineIcon />}>
+              图片
+            </MenuItem>
+            <MenuItem
+              icon={<DrawImageIcon />}
               onClick={() => {
                 editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, {});
               }}
             >
-              <DrawImageIcon />
-              <span>画板</span>
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => setEquationVisible(true)}>
-              <FormulaIcon />
-              <span>公式</span>
-            </Dropdown.Item>
-            <Dropdown.Item
+              画板
+            </MenuItem>
+            <MenuItem icon={<FormulaIcon />} onClick={() => setEquationVisible(true)}>
+              公式
+            </MenuItem>
+            <MenuItem
+              icon={<CheckboxLineIcon />}
               onClick={() => {
                 editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, {});
               }}
             >
-              <CheckboxLineIcon />
-              <span>待办事项</span>
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => {
-                // Modal.confirm({
-                //   title: '插入表格',
-                //   content: (
-                //     <>
-                //       <Input key="1" label="行数" defaultValue="4" ref={rowsRef} />
-                //       <br />
-                //       <Input key="2" label="列数" defaultValue="4" ref={columnsRef} />
-                //     </>
-                //   ),
-                //   onOk: () => {
-                //     const rows = parseInt(rowsRef.current.value);
-                //     const columns = parseInt(columnsRef.current.value);
-                //     const r = typeof rows === 'number' && rows >= 2 ? rows : 4;
-                //     const c = typeof columns === 'number' && columns >= 2 ? columns : 4;
-                //     if (r > 10) {
-                //       Toast.warning('最多添加 10 行');
-                //       return false;
-                //     }
-                //     if (c > 10) {
-                //       Toast.warning('最多添加 10 列');
-                //       return false;
-                //     }
-                //     editor.dispatchCommand(INSERT_TABLE_COMMAND, { rows: r, columns: c });
-                //   },
-                // });
-              }}
-            >
-              <Table2Icon />
-              <span>表格</span>
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => {
-                // Modal.confirm({
-                //   title: '插入投票',
-                //   content: <Input label="投票标题" defaultValue="" ref={questionRef} />,
-                //   onOk: () => {
-                //     if (!questionRef.current.value) {
-                //       questionRef.current.focus();
-                //       return false;
-                //     }
-                //     editor.dispatchCommand(INSERT_POLL_COMMAND, questionRef.current.value);
-                //   },
-                // });
-              }}
-            >
-              <PollIcon />
-              <span>投票</span>
-            </Dropdown.Item>
-            <Dropdown.Title>插入第三方服务</Dropdown.Title>
-            <Dropdown.Item
-              onClick={() => {
-                // Modal.confirm({
-                //   title: '网易云音乐',
-                //   content: (
-                //     <Input
-                //       style={{ width: 300 }}
-                //       label="网易云音乐链接"
-                //       defaultValue="https://music.163.com/#/song?id=1945895585"
-                //       ref={neteastMusicRef}
-                //       placeholder="https://music.163.com/#/song?id=1945895585"
-                //     />
-                //   ),
-                //   onOk: () => {
-                //     const url = neteastMusicRef.current.value;
-
-                //     if (!url) {
-                //       neteastMusicRef.current.focus();
-
-                //       return false;
-                //     }
-
-                //     const id = getUrlParam('id', url);
-
-                //     if (!id) {
-                //       return false;
-                //     }
-                //     console.log(id);
-
-                //     editor.dispatchCommand(INSERT_NETEAST_MUSIC_COMMAND, id);
-                //   },
-                // });
-              }}
-            >
-              <NeteaseCloudMusicFillIcon />
-              <span>网易云音乐</span>
-            </Dropdown.Item>
+              待办事项
+            </MenuItem>
+            <MenuItem icon={<Table2Icon />} onClick={() => setInsertImageModalVisible(true)}>
+              表格
+            </MenuItem>
+            <MenuItem icon={<PollIcon />} onClick={() => setInsertPollModalVisible(true)}>
+              投票
+            </MenuItem>
+            <MenuDivider />
+            <MenuGroup title="插入第三方服务">
+              <MenuItem
+                onClick={() => {
+                  // Modal.confirm({
+                  //   title: '网易云音乐',
+                  //   content: (
+                  //     <Input
+                  //       style={{ width: 300 }}
+                  //       label="网易云音乐链接"
+                  //       defaultValue="https://music.163.com/#/song?id=1945895585"
+                  //       ref={neteastMusicRef}
+                  //       placeholder="https://music.163.com/#/song?id=1945895585"
+                  //     />
+                  //   ),
+                  //   onOk: () => {
+                  //     const url = neteastMusicRef.current.value;
+                  //     if (!url) {
+                  //       neteastMusicRef.current.focus();
+                  //       return false;
+                  //     }
+                  //     const id = getUrlParam('id', url);
+                  //     if (!id) {
+                  //       return false;
+                  //     }
+                  //     console.log(id);
+                  //     editor.dispatchCommand(INSERT_NETEAST_MUSIC_COMMAND, id);
+                  //   },
+                  // });
+                }}
+              >
+                <NeteaseCloudMusicFillIcon />
+                <span>网易云音乐</span>
+              </MenuItem>
+            </MenuGroup>
           </>
-        }
-      >
-        <Button className="toolbar-item" type="pure">
-          <AddBoxLineIcon />
-          <span>插入</span>
-        </Button>
-      </Dropdown> */}
+        </MenuList>
+      </Menu>
+      <Divider orientation="vertical" />
       <IconButton
         aria-label="撤销"
         icon={<ArrowGoBackLineIcon />}
@@ -585,7 +517,7 @@ export default function ToolbarPlugin() {
 
       {blockType === 'code' ? (
         <>
-          <Select className="code-language" onChange={onCodeLanguageSelect} value={codeLanguage}>
+          <Select className="code-language" width="fit-content" onChange={onCodeLanguageSelect} value={codeLanguage}>
             {getCodeLanguages().map(l => (
               <option label={l} value={l} key={l} />
             ))}
@@ -593,8 +525,9 @@ export default function ToolbarPlugin() {
           <Divider orientation="vertical" />
           <Select
             className="code-theme"
+            width="fit-content"
             onChange={e => setCodeTheme(e.target.value as keyof typeof codeBlockThemes)}
-            value={codeTheme}
+            value={codeTheme as string}
           >
             {codeBlockThemeList.map(theme => (
               <option label={theme} value={theme} key={theme} />
@@ -663,7 +596,12 @@ export default function ToolbarPlugin() {
             ></IconButton>
           </Tooltip>
           <Menu>
-            <MenuButton as={IconButton} aria-label="Options" icon={<FontSize2Icon />} variant="outline" />
+            <MenuButton as={IconButton} aria-label="Options" variant="outline">
+              <Box px={2}>
+                <FontSize2Icon />
+                <ArrowDropDownFillIcon />
+              </Box>
+            </MenuButton>
             <MenuList>
               <MenuItem
                 icon={<CodeSSlashLineIcon />}
@@ -685,18 +623,30 @@ export default function ToolbarPlugin() {
                 icon={<SubscriptIcon />}
                 command="⌘N"
                 onClick={() => {
-                  editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
+                  editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
                 }}
               >
                 上标
               </MenuItem>
             </MenuList>
           </Menu>
-          {/* <ColorPicker value={fontColor} onChange={onFontColorSelect}>
-            <Button icon={<ArrowDropDownFillIcon />} className="font-color-button">
-              <FontColorIcon />
-            </Button>
-          </ColorPicker> */}
+          <ColorPicker value={fontColor} onChange={onFontColorSelect}>
+            <IconButton pl="1" aria-label="字体颜色" ml={2} variant="outline" className="font-color-button">
+              <>
+                <FontColorIcon />
+                <ArrowDropDownFillIcon />
+              </>
+            </IconButton>
+          </ColorPicker>
+          <ColorPicker value={fontBgColor} onChange={onFontBgColorSelect}>
+            <IconButton pl="1" aria-label="字体背景颜色" ml={2} variant="outline" className="font-color-button">
+              <>
+                <FontColorIcon />
+                <ArrowDropDownFillIcon />
+              </>
+            </IconButton>
+          </ColorPicker>
+
           <Tooltip label="链接">
             <IconButton
               aria-label="链接"
@@ -750,7 +700,7 @@ export default function ToolbarPlugin() {
           </Tooltip>
           <Divider orientation="vertical" />
           <Menu>
-            <MenuButton as={Button} icon={<AlignLeftIcon />} className="toolbar-item">
+            <MenuButton as={Button} leftIcon={<AlignLeftIcon />} variant="outline" className="toolbar-item">
               <span>对齐方式</span>
             </MenuButton>
             <MenuList>
@@ -792,7 +742,6 @@ export default function ToolbarPlugin() {
           </Menu>
         </>
       )}
-      {/* <EquationModal visible={equationVisible} onVisibleChange={v => setEquationVisible(v)} /> */}
     </div>
   );
 }
@@ -805,6 +754,7 @@ const toolbarStyles = () => {
     padding: 8px 10px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    border-bottom-width: 1px;
     /* background-color: backgroundColor; */
     vertical-align: middle;
     overflow: auto;

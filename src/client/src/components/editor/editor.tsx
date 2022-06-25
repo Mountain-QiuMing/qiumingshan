@@ -119,29 +119,19 @@ const Editor: FC = props => {
 
 export default Editor;
 
-const rootEditorStyle = theme => {
-  console.log(theme);
-
-  const primaryColor = 'red';
-
-  const borderColor = '#ccc';
-
+const rootEditorStyle = () => {
   return css`
     margin: 20px auto;
     border-radius: 2px;
     max-width: 1100px;
     position: relative;
     line-height: 20px;
-    font-weight: 400;
+    border-width: 1px;
 
     .UltraEditor-container {
       position: relative;
       cursor: text;
       display: block;
-    }
-
-    a {
-      color: ${primaryColor};
     }
 
     .emoji {
@@ -176,7 +166,7 @@ const rootEditorStyle = theme => {
       }
 
       img.focused {
-        outline: 2px solid ${primaryColor};
+        outline: 2px solid var(--ck-colors-primary-500);
         user-select: none;
       }
     }
@@ -281,7 +271,7 @@ const rootEditorStyle = theme => {
       position: absolute;
       left: 0;
       top: 0;
-      border-right: 1px solid ${borderColor};
+      border-right-width: 1px;
       padding: 8px;
       color: #777;
       white-space: pre-wrap;
@@ -395,7 +385,7 @@ const rootEditorStyle = theme => {
     }
     .UltraEditor__listItemUnchecked:focus:before,
     .UltraEditor__listItemChecked:focus:before {
-      box-shadow: 0 0 0 2px ${primaryColor};
+      box-shadow: 0 0 0 2px var(--ck-colors-primary-500);
       border-radius: 2px;
     }
     .UltraEditor__listItemUnchecked:before {
@@ -407,7 +397,7 @@ const rootEditorStyle = theme => {
 
     .excalidraw-button.selected,
     .embed-block.focused {
-      outline: 2px solid ${primaryColor};
+      outline: 2px solid var(--ck-colors-primary-500);
       user-select: none;
     }
   `;
