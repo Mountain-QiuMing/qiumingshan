@@ -1,14 +1,35 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { PostEntity } from '../post/post.entity';
+import { Controller, Post, Body, Put, Delete, Param, Get, UseGuards } from '@nestjs/common';
+import { TagService } from './tag.service';
+import { CreateTagDto } from './dto/create-tag.dto';
+import { AuthGuard } from '@nestjs/passport';
 
-@Entity()
+@Controller('tag')
 export class TagController {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  constructor(private readonly tagService: TagService) {}
 
-  @Column({ unique: true })
-  name: string;
+  @Get('recommand')
+  async findRecommendList() {
+    return this.tagService.findRecommendList();
+  }
 
-  @ManyToMany(() => PostEntity, post => post.tags)
-  posts: PostEntity[];
+  @Get('name/:name')
+  async index(@Param('name') name: string) {
+    return this.tagService.index(name);
+  }
+
+  @Post()
+  @UseGuards(AuthGuard())
+  async store(@Body() tag: CreateTagDto) {
+    return this.tagService.store(tag);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() tag: Partial<CreateTagDto>) {
+    return await this.tagService.update(id, tag);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return await this.tagService.delete(id);
+  }
 }

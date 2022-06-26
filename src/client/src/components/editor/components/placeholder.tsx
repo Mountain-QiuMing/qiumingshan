@@ -6,10 +6,10 @@ interface PlaceholderProps {
   children?: ReactNode;
 }
 
-const Placeholder: FC<PlaceholderProps> = ({ className }) => {
+const Placeholder: FC<PlaceholderProps> = ({ className, children }) => {
   return (
     <div css={!className && placeholderStyle} className={className || 'Placeholder__root'}>
-      请输入...
+      {children || '请输入...'}
     </div>
   );
 };

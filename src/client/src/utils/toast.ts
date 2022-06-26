@@ -29,6 +29,7 @@ const toast = $toast as ToastInstance;
 
 toastStatus.forEach(status => {
   toast[status] = (message: string, options?: UseToastOptions) => {
+    $toast.closeAll();
     return toastFn(message, {
       ...options,
       status,

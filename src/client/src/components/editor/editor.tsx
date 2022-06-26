@@ -13,6 +13,7 @@ import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
 import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import Theme from './themes';
 import ToolbarPlugin from './plugins/toolbar-plugin';
 // import TreeViewPlugin from './plugins/TreeViewPlugin';
@@ -44,6 +45,7 @@ import { FC } from 'react';
 import Square from './images/icons/square.svg';
 import SquareCheck from './images/icons/square-check.svg';
 import dynamic from 'next/dynamic';
+import { EditorState, LexicalEditor } from 'lexical';
 
 const ExcalidrawPlugin = dynamic(() => import('./plugins/excalidraw-plugin'), {
   ssr: false,
@@ -70,15 +72,26 @@ const initialConfig = {
   },
 };
 
-const Editor: FC = props => {
+interface EditorProps {
+  value: string;
+  onChange: (editorState: EditorState, editor: LexicalEditor) => void;
+}
+
+const Editor: FC<EditorProps> = props => {
+  const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
+    editorState.read(() => {
+      props.onChange?.(editorState, editor);
+    });
+  };
   return (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalComposer initialConfig={{ ...initialConfig }}>
       <EditorPropsContext.Provider value={props}>
         <div className="UltraEditor-root" css={rootEditorStyle}>
           <ToolbarPlugin />
 
           <div className="UltraEditor-container">
-            <RichTextPlugin contentEditable={<ContentEditable />} placeholder={<Placeholder />} />
+            <OnChangePlugin onChange={handleChange} />
+            <RichTextPlugin contentEditable={<ContentEditable />} placeholder={<Placeholder>请输入正文</Placeholder>} />
             <HistoryPlugin />
             <AutoFocusPlugin />
             <CodeHighlightPlugin />
