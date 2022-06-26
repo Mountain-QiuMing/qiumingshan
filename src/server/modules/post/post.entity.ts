@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Tag } from '@/modules/tag/tag.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, ManyToMany } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 
 @Entity({ name: 'post' })
@@ -11,6 +12,9 @@ export class PostEntity {
 
   @Column('longtext')
   body: string;
+
+  @ManyToMany(() => Tag, tag => tag.posts)
+  tags: Tag[];
 
   @ManyToOne(() => UserEntity, user => user.posts)
   user: UserEntity;

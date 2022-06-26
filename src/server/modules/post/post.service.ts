@@ -1,35 +1,147 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PostEntity as Post } from './post.entity';
 import { Repository } from 'typeorm';
-import { PostEntity } from './post.entity';
-
-const POSTS = [
-  {
-    title: 'First Post!',
-    slug: 'first-post',
-    content: [
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed suscipit quam, sit amet feugiat ligula. Nunc sit amet velit vestibulum, mattis orci gravida, aliquam velit. Donec eget lectus nec ipsum suscipit gravida et et odio. Morbi hendrerit dui scelerisque, imperdiet ligula in, ornare risus. Aliquam blandit sem risus, a ornare orci finibus ut. Maecenas interdum lacus arcu, nec finibus nibh semper quis. Vivamus venenatis pharetra ligula, eget semper justo finibus et. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nullam finibus accumsan elit, et ornare nulla accumsan id. Cras nec leo sed ex egestas malesuada. Nullam a bibendum libero. Cras ullamcorper massa sed odio euismod vulputate. Nullam at ullamcorper dolor. Maecenas et fermentum arcu. Sed interdum nunc neque, eu consectetur ex commodo finibus. Nunc interdum aliquam purus, eu lobortis enim semper et.',
-      'Ut sed dolor odio. Mauris cursus aliquet tortor, a posuere mi elementum in. Morbi sed efficitur mauris. Donec sed nulla efficitur, finibus massa ut, aliquet elit. Praesent eu mattis velit. Fusce sodales tincidunt mi, ut placerat turpis lobortis eu. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam at scelerisque lacus, ut commodo leo. Morbi vitae iaculis arcu. Donec finibus erat sed tristique feugiat. Morbi lorem tellus, elementum et facilisis eu, egestas fringilla eros. In quis arcu aliquam, ornare nulla malesuada, convallis massa. Donec tellus neque, tempor eu porttitor at, malesuada eget tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque vel pellentesque elit. Morbi semper purus velit, a pulvinar eros blandit vel.',
-    ],
-  },
-  {
-    title: 'Second Post!',
-    slug: 'second-post',
-    content: [
-      'Nulla sed purus ullamcorper, volutpat leo ac, blandit sem. Aenean efficitur ante rhoncus, lobortis est nec, consequat nisl. Fusce quis semper ligula, eget commodo magna. In tincidunt nisl sed dui ornare, nec pulvinar nibh laoreet. Suspendisse lobortis elit at nunc egestas fermentum. Etiam leo dui, fermentum ac nulla et, hendrerit varius arcu. Quisque porttitor congue mattis. Mauris non lorem suscipit turpis dictum porttitor. Nullam eget blandit felis. Duis eu erat ac mauris egestas placerat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
-      'Etiam vel tellus sollicitudin, laoreet quam id, dignissim eros. Suspendisse dapibus tempor magna eget eleifend. Morbi molestie arcu id sagittis tristique. Suspendisse luctus id velit et elementum. Cras gravida sodales quam vel iaculis. Cras aliquet ex a placerat tincidunt. Fusce at ligula urna. Pellentesque id sapien lacus. Nullam eleifend ultrices tortor a hendrerit. Vivamus cursus leo eget tortor porttitor finibus. Quisque at quam gravida, aliquam orci ut, volutpat enim. Vivamus sit amet lobortis lacus. In aliquet consectetur diam vitae lacinia. Suspendisse ultrices malesuada turpis ac congue. Pellentesque vestibulum, nulla nec mollis euismod, sapien ipsum lobortis tortor, nec pellentesque sem nulla gravida diam.',
-    ],
-  },
-];
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserEntity } from '../user/user.entity';
+import { CreatePostDto } from './dto/create-post.dto';
+import { Tag } from '../tag/tag.entity';
+import { ListOptionsInterface } from '../../core/decorator/list-options.decorator';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectRepository(PostEntity) private readonly postRepository: Repository<PostEntity>) {}
-  public getAllPosts() {
-    return this.postRepository.find();
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+
+    @InjectRepository(Tag)
+    private readonly tagRepository: Repository<Tag>,
+  ) {}
+
+  async beforeTag(tags: Array<Partial<Tag>>) {
+    const _tags = tags.map(async item => {
+      const { id, name } = item;
+
+      if (id) {
+        const _tag = await this.tagRepository.findOneBy({ id });
+
+        if (_tag) {
+          return _tag;
+        }
+
+        return;
+      }
+
+      if (name) {
+        const _tag = await this.tagRepository.findOneBy({ name });
+
+        if (_tag) {
+          return _tag;
+        }
+
+        return await this.tagRepository.save(item);
+      }
+    });
+
+    return Promise.all(_tags);
   }
 
-  public find(slug: string) {
-    return POSTS.find(item => item.slug === slug);
+  async store(post: CreatePostDto, user: UserEntity) {
+    const { tags } = post;
+
+    if (tags) {
+      post.tags = await this.beforeTag(tags);
+    }
+
+    // delete post.categoryId;
+
+    return await this.postRepository.save({
+      ...post,
+      user,
+    });
+  }
+
+  async index(body: ListOptionsInterface, postId?: string) {
+    const { tagIds, pageNum, pageSize, sort, order } = body;
+    const queryBuilder = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoin('post.user', 'user')
+      .select(['post', 'user.username', 'user.id', 'user.avatar', 'user.nickname'])
+      .leftJoin('post.tags', 'tags');
+
+    if (postId) {
+      queryBuilder.andWhereInIds([postId]);
+
+      return queryBuilder.getOne();
+    }
+
+    if (tagIds) {
+      queryBuilder.andWhere('tag.id IN (:...tagIds)', { tagIds });
+    }
+
+    queryBuilder.take(pageSize).skip(pageSize * (pageNum - 1));
+
+    queryBuilder.orderBy({
+      [`post.${sort}`]: order,
+    });
+
+    const [data, totalSize] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      page: {
+        pageSize,
+        pageNum,
+        totalSize,
+      },
+      sort,
+      order,
+    };
+  }
+
+  async show(id: string) {
+    return await this.postRepository.findOneBy({ id });
+  }
+
+  async update(id: string, post: Partial<CreatePostDto>) {
+    const { tags } = post;
+
+    delete post.tags;
+
+    if (await this.postRepository.findOneBy({ id })) {
+      if (Object.keys(post).length) {
+        await this.postRepository.update(id, post);
+      }
+    } else {
+      throw new NotFoundException('文章不存在，请检查id');
+    }
+
+    const entity = await this.postRepository.findOneBy({ id });
+
+    // const entity = await this.postRepository.findOne({ id }, {
+    //   relations: ['tags'],
+    // });
+
+    if (tags) {
+      entity.tags = await this.beforeTag(tags);
+    }
+
+    return await this.postRepository.save(entity);
+  }
+
+  async delete(id: string) {
+    return await this.postRepository.delete(id);
+  }
+
+  async collect(id: string, user: CreateUserDto) {
+    await this.postRepository.createQueryBuilder().relation(UserEntity, 'collections').of(user).add(id);
+  }
+
+  async unCollect(id: string, user: CreateUserDto) {
+    return await this.postRepository.createQueryBuilder().relation(UserEntity, 'collections').of(user).remove({ id });
+  }
+
+  async collecteds(id: string) {
+    return await this.postRepository.createQueryBuilder().relation(Post, 'collecteds').of(id).loadMany();
   }
 }
