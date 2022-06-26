@@ -11,6 +11,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostEntity } from './modules/post/post.entity';
 import { UserEntity } from './modules/user/user.entity';
+import { TagModule } from './modules/tag/tag.module';
+import { Tag } from '@/modules/tag/tag.entity';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { UserEntity } from './modules/user/user.entity';
           username: configService.get('MYSQL_USERNAME'),
           password: configService.get('MYSQL_PASSWORD'),
           database: configService.get('MYSQL_DATABASE'),
-          entities: [PostEntity, UserEntity],
+          entities: [PostEntity, UserEntity, Tag],
           autoLoadEntities: true,
           // migrations: ['src/**/*.ts'],
           synchronize: true,
@@ -76,6 +78,7 @@ import { UserEntity } from './modules/user/user.entity';
     PostModule,
     UserModule,
     AuthModule,
+    TagModule,
   ],
 })
 export class AppModule {}
