@@ -16,15 +16,16 @@ function toastFn(message: string, options?: UseToastOptions) {
   return $toast(toastOption);
 }
 
-type ToastInstance = typeof toastFn & {
+type ToastInstance = typeof $toast & {
   info: typeof toastFn;
   error: typeof toastFn;
   loading: typeof toastFn;
   success: typeof toastFn;
   warning: typeof toastFn;
+  confirm: UseToastOptions;
 };
 
-const toast = toastFn as ToastInstance;
+const toast = $toast as ToastInstance;
 
 toastStatus.forEach(status => {
   toast[status] = (message: string, options?: UseToastOptions) => {

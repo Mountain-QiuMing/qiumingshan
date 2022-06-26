@@ -13,6 +13,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import KatexRenderer from '../components/katex-renderer';
 import EquationModal from '../components/equation-modal';
+import { useDisclosure } from '@chakra-ui/react';
 
 export type EquationComponentProps = {
   equation: string;
@@ -22,14 +23,13 @@ export type EquationComponentProps = {
 
 const EquationComponent: FC<EquationComponentProps> = ({ equation, inline, nodeKey }) => {
   const [editor] = useLexicalComposerContext();
-
   const [equationValue, setEquationValue] = useState(equation || '');
-  const [showEquationEditor, setShowEquationEditor] = useState<boolean>(false);
+  const modalState = useDisclosure();
   const inputRef = useRef(null);
 
   const onHide = useCallback(
     (restoreSelection?: boolean) => {
-      setShowEquationEditor(false);
+      modalState.onClose();
       editor.update(() => {
         const node = $getNodeByKey(nodeKey);
 
@@ -45,7 +45,7 @@ const EquationComponent: FC<EquationComponentProps> = ({ equation, inline, nodeK
   );
 
   useEffect(() => {
-    if (showEquationEditor) {
+    if (modalState.isOpen) {
       return mergeRegister(
         editor.registerCommand(
           SELECTION_CHANGE_COMMAND,
@@ -79,27 +79,15 @@ const EquationComponent: FC<EquationComponentProps> = ({ equation, inline, nodeK
         ),
       );
     }
-  }, [editor, onHide, showEquationEditor]);
+  }, [editor, onHide, modalState.isOpen]);
 
   return (
     <>
-      {showEquationEditor ? (
+      {modalState.isOpen ? (
         // <EquationEditor equation={equationValue} setEquation={setEquationValue} inline={inline} inputRef={inputRef} />
-        <EquationModal
-          visible={showEquationEditor}
-          onVisibleChange={setShowEquationEditor}
-          equation={equation}
-          inline={inline}
-          onSubmit={setEquationValue}
-        />
+        <EquationModal equation={equation} inline={inline} onSubmit={setEquationValue} {...modalState} />
       ) : (
-        <KatexRenderer
-          equation={equationValue}
-          inline={inline}
-          onClick={() => {
-            setShowEquationEditor(true);
-          }}
-        />
+        <KatexRenderer equation={equationValue} inline={inline} onClick={modalState.onOpen} />
       )}
     </>
   );

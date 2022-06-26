@@ -77,7 +77,6 @@ import {
   ImageLineIcon,
   Table2Icon,
   DrawImageIcon,
-  PollIcon,
   CheckboxLineIcon,
   FontColorIcon,
   ArrowDropDownFillIcon,
@@ -386,9 +385,9 @@ export default function ToolbarPlugin() {
           <MenuItem icon={<Table2Icon />} onClick={insertTableModalState.onOpen}>
             表格
           </MenuItem>
-          <MenuItem icon={<PollIcon />} onClick={insertPollModalState.onOpen}>
+          {/* <MenuItem icon={<PollIcon />} onClick={insertPollModalState.onOpen}>
             投票
-          </MenuItem>
+          </MenuItem> */}
           <MenuDivider />
           <MenuGroup title="插入第三方服务">
             <MenuItem icon={<NeteaseCloudMusicFillIcon />} onClick={insertNeteastMusicModalState.onOpen}>

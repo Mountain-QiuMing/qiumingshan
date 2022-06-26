@@ -27,14 +27,14 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ImageResizer from '../../components/ImageResizer';
 import dynamic from 'next/dynamic';
-import { useDisclosure } from '@chakra-ui/react';
 
 const ExcalidrawModal = dynamic(() => import('./excalidraw-modal'), { ssr: false });
 const ExcalidrawImage = dynamic(() => import('./excalidraw-image'), { ssr: false });
 
 function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey }): JSX.Element {
   const [editor] = useLexicalComposerContext();
-  const modalState = useDisclosure({ isOpen: data === '[]' && !editor.isReadOnly() });
+  const [isModalOpen, setModalOpen] = useState<boolean>(data === '[]' && !editor.isReadOnly());
+  // const [isOpen] = useState(data === '[]' && !editor.isReadOnly());
   const imageContainerRef = useRef<HTMLImageElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
@@ -58,12 +58,12 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
   );
 
   useEffect(() => {
-    if (modalState.isOpen) {
+    if (isModalOpen) {
       editor.setReadOnly(true);
     } else {
       editor.setReadOnly(false);
     }
-  }, [modalState.isOpen, editor]);
+  }, [isModalOpen, editor]);
 
   useEffect(() => {
     return mergeRegister(
@@ -83,7 +83,7 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
             }
             setSelected(!isSelected);
             if (event.detail > 1) {
-              modalState.onOpen();
+              setModalOpen(true);
             }
             return true;
           }
@@ -98,7 +98,7 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
   }, [clearSelection, editor, isSelected, isResizing, onDelete, setSelected]);
 
   const deleteNode = useCallback(() => {
-    modalState.onClose();
+    setModalOpen(false);
     return editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isExcalidrawNode(node)) {
@@ -137,18 +137,20 @@ function ExcalidrawComponent({ nodeKey, data }: { data: string; nodeKey: NodeKey
   return (
     <>
       <ExcalidrawModal
+        visible={isModalOpen}
+        onVisibileChange={setModalOpen}
         initialElements={elements}
         onDelete={deleteNode}
         onHide={() => {
           editor.setReadOnly(false);
-          modalState.onClose();
+
+          setModalOpen(false);
         }}
         onSave={newData => {
           editor.setReadOnly(false);
           setData(newData);
-          modalState.onClose();
+          setModalOpen(false);
         }}
-        {...modalState}
       />
       {elements.length > 0 && (
         <button ref={buttonRef} className={`excalidraw-button ${isSelected ? 'selected' : ''}`}>

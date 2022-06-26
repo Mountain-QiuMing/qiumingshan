@@ -17,7 +17,7 @@
     "baseUrl": "./",
     "paths": {
       "shared/*": ["../shared/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src", "pages", "**/*.d.ts", "next.config.js", "../shared"],

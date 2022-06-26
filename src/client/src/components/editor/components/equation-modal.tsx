@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { FC, useState } from 'react';
-import { Checkbox, Input, ModalHeader, Textarea, UseDisclosureReturn } from '@chakra-ui/react';
+import { Checkbox, Input, Textarea, UseDisclosureReturn } from '@chakra-ui/react';
 import { INSERT_EQUATION_COMMAND } from '../plugins/equations-plugin';
 import KatexRenderer from './katex-renderer';
 import { MyModal } from '../../modal';
@@ -26,35 +26,36 @@ const EquationModal: FC<EquationModalProps> = props => {
   };
 
   return (
-    <MyModal css={equationModalStyle} {...rest} onOk={onOk}>
-      <ModalHeader>{`${defaultEquation ? '编辑' : '插入'}公式`}</ModalHeader>
-      <div className="KatexEquationAlterer_inline-checkbox">
-        <Checkbox checked={inline} onChange={e => setInline(e.target.checked)}>
-          行内展示
-        </Checkbox>
-      </div>
-      <div>
-        {inline ? (
-          <Input
-            onChange={e => {
-              setEquation(e.target.value);
-            }}
-            value={equation}
-            className="KatexEquationAlterer_textArea"
-          />
-        ) : (
-          <Textarea
-            onChange={e => {
-              setEquation(e.target.value);
-            }}
-            value={equation}
-            className="KatexEquationAlterer_textArea"
-          />
-        )}
-      </div>
-      <div className="KatexEquationAlterer_previrew">预览</div>
-      <div className="KatexEquationAlterer_katex">
-        <KatexRenderer equation={equation} inline={false} onClick={() => null} />
+    <MyModal {...rest} onOk={onOk} title={`${defaultEquation ? '编辑' : '插入'}公式`}>
+      <div css={equationModalStyle}>
+        <div className="KatexEquationAlterer_inline-checkbox">
+          <Checkbox isChecked={inline} onChange={e => setInline(e.target.checked)}>
+            行内展示
+          </Checkbox>
+        </div>
+        <div>
+          {inline ? (
+            <Input
+              onChange={e => {
+                setEquation(e.target.value);
+              }}
+              value={equation}
+              className="KatexEquationAlterer_textArea"
+            />
+          ) : (
+            <Textarea
+              onChange={e => {
+                setEquation(e.target.value);
+              }}
+              value={equation}
+              className="KatexEquationAlterer_textArea"
+            />
+          )}
+        </div>
+        <div className="KatexEquationAlterer_previrew">预览</div>
+        <div className="KatexEquationAlterer_katex">
+          <KatexRenderer equation={equation} inline={false} onClick={() => null} />
+        </div>
       </div>
     </MyModal>
   );

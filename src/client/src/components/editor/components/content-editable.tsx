@@ -15,10 +15,7 @@ const Placeholder: FC<PlaceholderProps> = ({ className }) => {
     <ContentEditable
       css={!className && placeholderStyle(editorProps)}
       className={className || 'ContentEditable__root'}
-      // style={{ caretColor: editorProps.theme === 'dark' ? '#fff' : 'rgb(5, 5, 5)' }}
-    >
-      请输入...
-    </ContentEditable>
+    />
   );
 };
 

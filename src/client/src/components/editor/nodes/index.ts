@@ -15,7 +15,7 @@ import { ExcalidrawNode } from './ExcalidrawNode';
 import { ImageNode } from './image-node';
 import { KeywordNode } from './keyword-node';
 import { MentionNode } from './mention-node';
-import { PollNode } from './poll-node';
+// import { PollNode } from './poll-node';
 // import { StickyNode } from './StickyNode';
 import { TypeaheadNode } from './typeahead-node';
 import { NeteastMusicNode } from './neteast-music-node';
@@ -34,7 +34,7 @@ const PlaygroundNodes: Array<new (...args: any[]) => LexicalNode> = [
   AutoLinkNode,
   LinkNode,
   OverflowNode,
-  PollNode,
+  // PollNode,
   // StickyNode,
   ImageNode,
   MentionNode,

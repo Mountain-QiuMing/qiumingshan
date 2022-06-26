@@ -1,6 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { FC, useState } from 'react';
-import { NumberInput, UseDisclosureReturn } from '@chakra-ui/react';
+import { NumberInput, NumberInputField, UseDisclosureReturn } from '@chakra-ui/react';
 import { toast } from '@/utils/toast';
 import { MyModal } from '@/components/modal';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
@@ -29,8 +29,12 @@ const InsetTableDialog: FC<InsertTableDialogProps> = props => {
 
   return (
     <MyModal onOk={onSubmitImage} title="插入表格" {...props}>
-      <NumberInput key="1" placeholder="行数" value={rows} onChange={(_, e) => setRows(e)} />
-      <NumberInput key="2" placeholder="列数" value={columns} onChange={(_, e) => setColumns(e)} />
+      <NumberInput key="1" placeholder="行数" value={rows} onChange={(_, e) => setRows(e)}>
+        <NumberInputField />
+      </NumberInput>
+      <NumberInput key="2" placeholder="列数" value={columns} onChange={(_, e) => setColumns(e)}>
+        <NumberInputField />
+      </NumberInput>
     </MyModal>
   );
 };

@@ -30,7 +30,6 @@ import HorizontalRulePlugin from './plugins/horizontal-rule-plugin';
 import EquationsPlugin from './plugins/equations-plugin';
 import { css } from '@emotion/react';
 import ListMaxIndentLevelPlugin from './plugins/list-max-indent-level-plugin';
-import PollPlugin from './plugins/poll-plugin';
 import ActionsPlugins from './plugins/action-plugin';
 import MentionsPlugin from './plugins/mentions-plugin';
 import EmojisPlugin from './plugins/emojis-plugin';
@@ -97,7 +96,7 @@ const Editor: FC = props => {
             <ExcalidrawPlugin />
             <EquationsPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
-            <PollPlugin />
+            {/* <PollPlugin /> */}
             {/* <TreeViewPlugin /> */}
             <MentionsPlugin />
             <ActionsPlugins />

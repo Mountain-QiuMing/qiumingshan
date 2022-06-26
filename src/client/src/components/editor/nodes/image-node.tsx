@@ -12,12 +12,9 @@ import type {
 } from 'lexical';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { mergeRegister } from '@lexical/utils';
 import {
@@ -33,18 +30,12 @@ import {
 } from 'lexical';
 import React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-
 import { useSharedHistoryContext } from '../context/SharedHistoryContext';
-import EmojisPlugin from '../plugins/emojis-plugin';
-import ImagesPlugin from '../plugins/images-plugin';
-import KeywordsPlugin from '../plugins/keywords-plugin';
-import MentionsPlugin from '../plugins/mentions-plugin';
-import TableCellActionMenuPlugin from '../plugins/table-cell-resizer-plugin';
 import ContentEditable from '../components/content-editable';
 import ImageResizer from '../components/ImageResizer';
 import Placeholder from '../components/placeholder';
 import { css } from '@emotion/react';
-import { useTheme } from '@chakra-ui/react';
+import { Box, useTheme } from '@chakra-ui/react';
 
 export interface ImagePayload {
   altText: string;
@@ -191,7 +182,6 @@ function ImageComponent({
   };
 
   const onResizeEnd = (nextWidth: 'inherit' | number, nextHeight: 'inherit' | number) => {
-    // Delay hiding the resize bars for click case
     setTimeout(() => {
       setIsResizing(false);
     }, 200);
@@ -229,17 +219,8 @@ function ImageComponent({
       </div>
 
       {showCaption && (
-        <div css={imageCaptionStyle(theme)}>
+        <Box css={imageCaptionStyle(theme)} textColor="whiteAlpha.900" bgColor="blackAlpha.300">
           <LexicalNestedComposer initialEditor={caption}>
-            <MentionsPlugin />
-            <TablePlugin />
-            <TableCellActionMenuPlugin />
-            <ImagesPlugin />
-            <LinkPlugin />
-            <EmojisPlugin />
-            <HashtagPlugin />
-            <KeywordsPlugin />
-
             <HistoryPlugin externalHistoryState={historyState} />
             <RichTextPlugin
               contentEditable={<ContentEditable className="ImageNode__contentEditable" />}
@@ -247,7 +228,7 @@ function ImageComponent({
               initialEditorState={null}
             />
           </LexicalNestedComposer>
-        </div>
+        </Box>
       )}
       {resizable && isFocused && (
         <ImageResizer
@@ -265,6 +246,7 @@ function ImageComponent({
 }
 
 const imageCaptionStyle = theme => {
+  console.log(theme);
   return css`
     display: block;
     position: absolute;
@@ -273,8 +255,7 @@ const imageCaptionStyle = theme => {
     right: 0;
     padding: 0;
     margin: 0;
-    border-top: 1px solid ${theme.colors.bg};
-    background-color: 1;
+    border-top-width: 1px;
     min-width: 100px;
     overflow: hidden;
 

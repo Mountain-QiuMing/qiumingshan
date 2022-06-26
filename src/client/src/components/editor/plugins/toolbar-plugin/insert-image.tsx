@@ -4,9 +4,9 @@ import { FC, useState, useRef } from 'react';
 import { Tabs, Button, Input, TabList, Tab, TabPanels, TabPanel, UseDisclosureReturn } from '@chakra-ui/react';
 import { useEditorPropsContext } from '../../context/editor-props-context';
 import { InsertImagePayload, INSERT_IMAGE_COMMAND } from '../images-plugin';
-import { toast } from '../../../../utils/toast';
-import { MyModal } from '../../../modal';
-import Upload, { UploadRef } from '../../../upload';
+import { toast } from '@/utils/toast';
+import Upload, { UploadRef } from '@/components/upload';
+import { MyModal } from '@/components/modal';
 
 interface InsertImageDialogProps extends UseDisclosureReturn {}
 
@@ -20,7 +20,6 @@ const InsetImageDialog: FC<InsertImageDialogProps> = props => {
 
   const onSubmitImage = async () => {
     let insertImages = [];
-
     if (currentTab === 1) {
       const removeUrl = removeUrlRef.current.value;
 
@@ -35,21 +34,24 @@ const InsetImageDialog: FC<InsertImageDialogProps> = props => {
 
       if (!handleUploadImages) {
         insertImages = fileList.map(img => ({ src: img.url, altText: '' }));
-        insertImage(insertImages);
       } else {
         if (!removeImageList.length) {
           return toast.warning('请上传图片');
         }
-        insertImage(removeImageList.map(img => ({ src: img.src, altText: '' })));
+        insertImages = removeImageList.map(img => ({ src: img.src, altText: '' }));
       }
     }
+
+    insertImage(insertImages);
   };
 
   const insertImage = (payloads: InsertImagePayload[]) => {
     payloads.forEach(payload => {
       editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
     });
-
+    setCurrentTab(0);
+    setRemoveImageList([]);
+    setFileList([]);
     props.onClose();
   };
 
@@ -64,7 +66,7 @@ const InsetImageDialog: FC<InsertImageDialogProps> = props => {
   };
 
   return (
-    <MyModal css={insetImageDialogStyles} onOk={onSubmitImage} title="插入图片" {...props}>
+    <MyModal css={insetImageDialogStyles} onOk={onSubmitImage} title="插入图片" {...props} size="lg">
       <Tabs onChange={e => setCurrentTab(e)}>
         <TabList>
           <Tab>本地图片</Tab>
@@ -83,7 +85,7 @@ const InsetImageDialog: FC<InsertImageDialogProps> = props => {
             <Input
               ref={removeUrlRef}
               placeholder="请输入图片地址"
-              defaultValue="https://static01.imgkr.com/temp/f23eb233e5ec4822a62d98593dd6ece8.png"
+              defaultValue="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"
             />
           </TabPanel>
         </TabPanels>

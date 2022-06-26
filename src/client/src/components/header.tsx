@@ -93,12 +93,12 @@ const Header: FC<HeaderProps> = props => {
                 </Button>
               </Link>
             </Show>
-            <ThemeSwitch mr={1} onChange={handleThemeChange} />
           </>
         )}
       </Box>
 
       <Box display="flex" alignItems="center" userSelect="none">
+        <ThemeSwitch mr={4} onChange={handleThemeChange} />
         {store.token ? (
           <Menu>
             <MenuButton>

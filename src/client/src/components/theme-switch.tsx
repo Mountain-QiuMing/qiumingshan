@@ -12,7 +12,6 @@ const ThemeSwitch: ChakraComponent<'span', ThemeSwitchProps> = props => {
   const { onChange } = props;
   const { toggleColorMode, colorMode } = useColorMode();
   const iconSize = useBreakpointValue([18, 24]);
-  console.log(iconSize);
 
   const handleSwitchTheme = async () => {
     const nextTheme = colorMode === ThemeEnum.DARK ? ThemeEnum.light : ThemeEnum.DARK;

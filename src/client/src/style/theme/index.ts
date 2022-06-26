@@ -3,20 +3,16 @@ import { colorModeConfig } from './config';
 import { color } from './color';
 import { component } from './component';
 import type { Theme as ChakraTheme } from '@chakra-ui/theme';
+import { style } from './style';
 
 export const theme = extendTheme(
   {
     config: colorModeConfig,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     colors: color,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     components: component,
+    styles: style,
   },
   withDefaultProps({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     defaultProps: {
       // colorScheme: 'primary',
       size: 'sm',

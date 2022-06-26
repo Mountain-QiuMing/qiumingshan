@@ -11,5 +11,12 @@ export const color = {
     800: '#086F83',
     900: '#065666',
   },
-  bg: 'var(--brand)',
+  modes: {
+    dark: {
+      bg: '#000000',
+    },
+    light: {
+      bg: '#ffffff',
+    },
+  },
 };

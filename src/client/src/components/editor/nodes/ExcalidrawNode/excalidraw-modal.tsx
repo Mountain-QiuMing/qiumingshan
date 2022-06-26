@@ -1,14 +1,25 @@
 import Excalidraw from '@excalidraw/excalidraw';
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
 import { FC, useEffect, useRef, useState } from 'react';
-import { UseDisclosureReturn } from '@chakra-ui/react';
-import { MyModal } from '../../../modal';
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { MyModal } from '@/components/modal';
 
 export type ExcalidrawElementFragment = {
   isDeleted?: boolean;
 };
 
-interface ExcalidrawModalProps extends UseDisclosureReturn {
+interface ExcalidrawModalProps {
+  visible: boolean;
+  onVisibileChange: (visible: boolean) => void;
   initialElements: ReadonlyArray<ExcalidrawElementFragment>;
   onDelete: () => void;
   onHide: () => void;
@@ -16,10 +27,12 @@ interface ExcalidrawModalProps extends UseDisclosureReturn {
 }
 
 const ExcalidrawModal: FC<ExcalidrawModalProps> = props => {
-  const { onSave, initialElements, onDelete, ...modalState } = props;
+  const { onSave, initialElements, onDelete, visible } = props;
+  const confirmState = useDisclosure();
   const excalidrawRef = useRef(null);
   const excaliDrawModelRef = useRef(null);
   const [elements, setElements] = useState<ReadonlyArray<ExcalidrawElementFragment>>(initialElements);
+  const cancelRef = useRef();
 
   useEffect(() => {
     if (excaliDrawModelRef.current !== null) {
@@ -40,23 +53,15 @@ const ExcalidrawModal: FC<ExcalidrawModalProps> = props => {
     if (elements.filter(el => !el.isDeleted).length === 0) {
       onDelete();
     } else {
-      quiteConfirm();
+      confirmState.onOpen();
     }
-  };
-
-  const quiteConfirm = () => {
-    // Modal.confirm({
-    //   title: '撤销',
-    //   content: '你确定要撤销全部的更改吗？',
-    //   onOk: onHide,
-    // });
   };
 
   useEffect(() => {
     excalidrawRef?.current?.updateScene({ elements: initialElements });
   }, [initialElements]);
 
-  if (modalState.isOpen === false) {
+  if (visible === false) {
     return null;
   }
 
@@ -65,18 +70,38 @@ const ExcalidrawModal: FC<ExcalidrawModalProps> = props => {
   };
 
   return (
-    <MyModal onOk={save} {...modalState} onClose={discard} size="6xl" closeOnOverlayClick={false}>
-      <div style={{ height: '70vh' }}>
-        <Excalidraw
-          langCode="zh-CN"
-          onChange={onChange}
-          initialData={{
-            appState: { isLoading: false },
-            elements: initialElements as ExcalidrawElement[],
-          }}
-        />
-      </div>
-    </MyModal>
+    <>
+      <MyModal onOk={save} isOpen={visible} onClose={discard} size="6xl" closeOnOverlayClick={false} title="编辑画板">
+        <div style={{ height: '70vh' }}>
+          <Excalidraw
+            langCode="zh-CN"
+            onChange={onChange}
+            initialData={{
+              appState: { isLoading: false },
+              elements: initialElements as ExcalidrawElement[],
+            }}
+          />
+        </div>
+      </MyModal>
+      <AlertDialog isOpen={confirmState.isOpen} onClose={confirmState.onClose} leastDestructiveRef={cancelRef}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              警告
+            </AlertDialogHeader>
+
+            <AlertDialogBody>你确定要撤销本次全部的更改吗？</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button onClick={confirmState.onClose}>取消</Button>
+              <Button colorScheme="red" onClick={props.onHide} ml={3}>
+                确定
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
   );
 };
 
