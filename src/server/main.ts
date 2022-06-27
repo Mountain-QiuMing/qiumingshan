@@ -8,24 +8,17 @@ import { AllExceptionsFilter } from './core/exception/all.exception';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response, NextFunction } from 'express';
 import * as cookieParser from 'cookie-parser';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(ServerModule);
+  const appConfig = app.get(ConfigService);
+  const appName = appConfig.get('APP_NAME');
+  const port = appConfig.get('APP_PORT');
+  const multerDest = appConfig.get('MULTER_DEST');
+  const publicFilePath = appConfig.get('PUBLIC_FILE_PATH');
 
-  const docConfig = new DocumentBuilder()
-    .setTitle('秋名山')
-    .setDescription('秋名山 接口文档')
-    .setVersion('1.0')
-    .addTag('秋名山')
-    .build();
-  const document = SwaggerModule.createDocument(app, docConfig);
-  SwaggerModule.setup('api', app, document);
-
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new TransformInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
-  // app.useGlobalFilters(new AllExceptionsFilter());
-
+  app.use(publicFilePath, express.static(multerDest));
   app.use(cookieParser());
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Credentials', 'true'); // 允许客户端携带证书式访问。保持跨域请求中的Cookie。注意：此处设true时，Access-Control-Allow-Origin的值不能为 '*'
@@ -34,8 +27,18 @@ async function bootstrap() {
     next();
   });
 
-  const appConfig = app.get(ConfigService);
-  const port = appConfig.get('APP_PORT');
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  const docConfig = new DocumentBuilder()
+    .setTitle(appName)
+    .setDescription(`${appName} 接口文档`)
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, docConfig);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(port);
 

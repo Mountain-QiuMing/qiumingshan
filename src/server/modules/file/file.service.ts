@@ -3,10 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { ApiException } from 'src/server/core/exception/api.exception';
 import { FileEntity } from './file.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class FileService {
-  constructor(@InjectRepository(FileEntity) private fileRepository: Repository<FileEntity>) {}
+  constructor(
+    @InjectRepository(FileEntity) private fileRepository: Repository<FileEntity>,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * 上传文件
@@ -14,7 +18,7 @@ export class FileService {
    * @param {string} type 文件类别
    * @return {Promise<Result>} result
    */
-  async upload(fileData: Express.Multer.File, type = ''): Promise<FileEntity> {
+  async upload(fileData: Express.Multer.File, type = '') {
     let file: FileEntity;
 
     try {
@@ -31,11 +35,15 @@ export class FileService {
 
       file = await this.fileRepository.save<FileEntity>(this.fileRepository.create(fileLike));
     } catch (error) {
+      console.log(error);
       if (error.code === 'ER_DUP_ENTRY') throw new ApiException('文件已存在', HttpStatus.CONFLICT);
       throw new ApiException('发生了一些错误', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    return file;
+    return {
+      fileName: fileData.filename,
+      fileUrl: this.configService.get('APP_URL') + this.configService.get('PUBLIC_FILE_PATH') + '/' + file.fileName,
+    };
   }
 
   /**

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MulterModule } from '@nestjs/platform-express';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
@@ -52,7 +51,7 @@ import { Tag } from '@/modules/tag/tag.entity';
             },
           },
           defaults: {
-            from: `"秋名山" <${configService.get('EMAIL_SMTP_USER')}>`,
+            from: `"${configService.get('APP_NAME')}" <${configService.get('EMAIL_SMTP_USER')}>`,
           },
           template: {
             dir: path.join(__dirname, './templates'),
@@ -65,15 +64,7 @@ import { Tag } from '@/modules/tag/tag.entity';
       },
       inject: [ConfigService],
     }),
-    MulterModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          dest: configService.get('MULTER_DEST'),
-        };
-      },
-      inject: [ConfigService],
-    }),
+
     FileModule,
     PostModule,
     UserModule,

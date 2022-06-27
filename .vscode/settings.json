@@ -9,6 +9,6 @@
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.words": ["Excalidraw", "katex", "neteast", "Resizer", "typeahead"],
+  "cSpell.words": ["Excalidraw", "fieldname", "katex", "neteast", "Resizer", "typeahead"],
   "typescript.preferences.importModuleSpecifier": "shortest"
 }
