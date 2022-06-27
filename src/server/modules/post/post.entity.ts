@@ -1,5 +1,5 @@
 import { Tag } from '@/modules/tag/tag.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 
 @Entity({ name: 'post' })
@@ -14,9 +14,11 @@ export class PostEntity {
   body: string;
 
   @ManyToMany(() => Tag, tag => tag.posts)
+  @JoinTable()
   tags: Tag[];
 
   @ManyToOne(() => UserEntity, user => user.posts)
+  @JoinTable()
   user: UserEntity;
 
   @CreateDateColumn()

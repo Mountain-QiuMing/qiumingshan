@@ -3,7 +3,7 @@ import { FormErrorMessage, Input, Button, FormControl, Text, Link } from '@chakr
 import ThemeSwitch from '@/components/theme-switch';
 import { css } from '@emotion/react';
 import { Register } from 'shared/interface/user/register.interface';
-import Bg from 'assets/images/bg.webp';
+import Bg from '@/assets/images/bg.webp';
 import { apiRegister } from '@/api/user/register.api';
 import NextLink from 'next/link';
 import { toast } from '@/utils/toast';

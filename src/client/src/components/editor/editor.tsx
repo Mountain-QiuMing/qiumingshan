@@ -78,19 +78,15 @@ interface EditorProps {
 }
 
 const Editor: FC<EditorProps> = props => {
-  const handleChange = (editorState: EditorState, editor: LexicalEditor) => {
-    editorState.read(() => {
-      props.onChange?.(editorState, editor);
-    });
-  };
+  console.log(props.value);
   return (
-    <LexicalComposer initialConfig={{ ...initialConfig }}>
+    <LexicalComposer initialConfig={{ ...initialConfig, editorState: props.value }}>
       <EditorPropsContext.Provider value={props}>
         <div className="UltraEditor-root" css={rootEditorStyle}>
           <ToolbarPlugin />
 
           <div className="UltraEditor-container">
-            <OnChangePlugin onChange={handleChange} />
+            <OnChangePlugin onChange={props.onChange} />
             <RichTextPlugin contentEditable={<ContentEditable />} placeholder={<Placeholder>请输入正文</Placeholder>} />
             <HistoryPlugin />
             <AutoFocusPlugin />

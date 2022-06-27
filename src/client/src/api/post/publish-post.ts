@@ -9,10 +9,10 @@ export const apiGetPostList = (data?: PostPageDto) => {
 
 /** 通过 `id` 获取文章详情接口 */
 export const apiGetPostById = (id: string) => {
-  return request<PagerData<Post[]>>('get', `/post/${id}`);
+  return request<Post>('get', `/post/${id}`);
 };
 
 /** 发布文章接口 */
 export const apiAddPost = (data: PostDto) => {
-  return request('post', '/api/post', data);
+  return request<Post>('post', '/post', data);
 };

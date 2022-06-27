@@ -63,11 +63,11 @@ export class PostService {
 
   async index(body: ListOptionsInterface, postId?: string) {
     const { tagIds, pageNum, pageSize, sort, order } = body;
-    const queryBuilder = await this.postRepository
+    const queryBuilder = this.postRepository
       .createQueryBuilder('post')
       .leftJoin('post.user', 'user')
-      .select(['post', 'user.username', 'user.id', 'user.avatar', 'user.nickname'])
-      .leftJoin('post.tags', 'tags');
+      .select(['post', 'user.id', 'user.username', 'user.avatar', 'user.nickname'])
+      .leftJoinAndSelect('post.tags', 'tags');
 
     if (postId) {
       queryBuilder.andWhereInIds([postId]);
@@ -116,11 +116,12 @@ export class PostService {
       throw new NotFoundException('文章不存在，请检查id');
     }
 
-    const entity = await this.postRepository.findOneBy({ id });
-
-    // const entity = await this.postRepository.findOne({ id }, {
-    //   relations: ['tags'],
-    // });
+    const entity = await this.postRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['tags'],
+    });
 
     if (tags) {
       entity.tags = await this.beforeTag(tags);

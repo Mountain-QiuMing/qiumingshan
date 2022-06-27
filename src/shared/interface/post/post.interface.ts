@@ -11,7 +11,7 @@ export interface PostDto {
   /** 文章内容 */
   body: string;
   /** 标签 */
-  tags: Tag[];
+  tags: Partial<Tag>[];
 }
 
 export interface PostPageDto {

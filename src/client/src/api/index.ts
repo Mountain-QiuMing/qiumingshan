@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
   },
   error => {
     const cookies = getCookies();
-    console.log(error);
+    // console.dir(error);
     if (error.response?.status === 401) {
       for (const key in cookies) {
         removeCookies(key);
@@ -51,7 +51,6 @@ axiosInstance.interceptors.response.use(
     } else {
       errorMessage = error.message || error.response.data?.message;
     }
-    console.dir(error);
     toast.error(errorMessage);
     error.message && console.error(errorMessage);
 

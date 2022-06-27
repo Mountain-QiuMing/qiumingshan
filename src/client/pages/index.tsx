@@ -1,16 +1,23 @@
 import { GetServerSideProps } from 'next';
-import { request } from '@/api';
 import Layout from '@/components/layout';
+import { apiGetPostList } from '@/api/post/publish-post';
+import { Heading } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import { Post } from 'shared/interface/post/post.interface';
 
 const IndexPage = props => {
+  const router = useRouter();
+
+  const handlePostDetail = (post: Post) => {
+    router.push(`/p/${post.id}`);
+  };
   return (
     <Layout title="Home | Next.js + TypeScript Example">
-      <h1>Posts</h1>
+      <Heading>文章列表</Heading>
       <ul>
-        {props.posts?.map((post, index) => (
-          <li key={index}>
+        {props.posts.data?.map((post, index) => (
+          <li key={index} onClick={() => handlePostDetail(post)}>
             <h3>{post.title}</h3>
-            <p>{post.content}</p>
           </li>
         ))}
       </ul>
@@ -19,7 +26,7 @@ const IndexPage = props => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await request('get', '/post');
+  const res = await apiGetPostList();
   return { props: { posts: res.result || [] } };
 };
 
