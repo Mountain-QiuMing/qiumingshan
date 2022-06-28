@@ -12,6 +12,7 @@ import { PostEntity } from './modules/post/post.entity';
 import { UserEntity } from './modules/user/user.entity';
 import { TagModule } from './modules/tag/tag.module';
 import { Tag } from '@/modules/tag/tag.entity';
+import { EventsModule } from './modules/events/events.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { Tag } from '@/modules/tag/tag.entity';
     UserModule,
     AuthModule,
     TagModule,
+    EventsModule,
   ],
 })
 export class AppModule {}

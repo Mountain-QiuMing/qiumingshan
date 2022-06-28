@@ -1,6 +1,7 @@
 import { PipeTransform, Injectable, ArgumentMetadata, HttpException, HttpStatus } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { WsException } from '@nestjs/websockets';
 import { StatusCodeEnum } from 'shared/constants/status-code.enum';
 
 interface Props {
@@ -8,6 +9,10 @@ interface Props {
   isWs?: boolean;
 }
 
+interface Props {
+  /** 是否为 websocket */
+  isWs?: boolean;
+}
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   isWs: boolean;
@@ -30,6 +35,13 @@ export class ValidationPipe implements PipeTransform<any> {
         error = error.children.shift();
       }
       Object.keys(error.constraints).forEach(key => {
+        if (this.isWs) {
+          throw new WsException({
+            status: false,
+            message: error.constraints[key],
+          });
+        }
+
         throw new HttpException(
           {
             code: StatusCodeEnum.INVALID_PARAMETER,
