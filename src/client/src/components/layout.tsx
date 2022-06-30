@@ -1,17 +1,19 @@
 import { Alert, AlertIcon, Button, Container } from '@chakra-ui/react';
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { apiSendVerifyEmail } from '../api/user/verify-email.api';
 import { toast } from '@/utils/toast';
 import Header from './header';
 import { useStore } from '../store';
+import { io } from 'socket.io-client';
 
 interface LayoutProps {
   title?: string;
+  header?: ReactNode;
   children: ReactNode;
   container?: boolean;
 }
 
-const Layout: FC<LayoutProps> = ({ children, container }) => {
+const Layout: FC<LayoutProps> = ({ children, container, header }) => {
   // const verified = getCookie('verified');
   const store = useStore();
   const [loading, setLoading] = useState(false);
@@ -24,6 +26,29 @@ const Layout: FC<LayoutProps> = ({ children, container }) => {
       toast.success('已发送，请留意您的邮箱');
     }
   };
+
+  useEffect(() => {
+    const socket = io('ws://127.0.0.1:3002', {
+      path: '/socket',
+      query: {
+        userId: store.id,
+      },
+    });
+    // socket.connect()
+    socket.on('connect', () => {
+      console.log('connected');
+
+      store.setUserInfo({
+        socket,
+        socketId: socket.id,
+      });
+
+      socket.on('audit', e => {
+        console.log('文章待审核', e);
+      });
+    });
+  }, []);
+
   return (
     <div>
       {store.token && !store.verified && (
@@ -37,7 +62,7 @@ const Layout: FC<LayoutProps> = ({ children, container }) => {
           </p>
         </Alert>
       )}
-      <Header />
+      {header || <Header />}
       {container ? <Container>{children}</Container> : children}
     </div>
   );

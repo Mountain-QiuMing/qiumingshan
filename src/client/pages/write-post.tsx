@@ -6,6 +6,7 @@ import { EditorState } from 'lexical';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Header from '../src/components/header';
+import Layout from '../src/components/layout';
 
 export default function WritePost() {
   const [title, setTitle] = useState('这是一个标题');
@@ -34,13 +35,17 @@ export default function WritePost() {
     }
   };
   return (
-    <>
-      <Header justifyContent="space-between" px="10">
-        <Heading fontSize={['small', 'medium', 'large']}>写文章</Heading>
-        <Button colorScheme="primary" onClick={handlePublish}>
-          发布
-        </Button>
-      </Header>
+    <Layout
+      container={false}
+      header={
+        <Header justifyContent="space-between" px="10">
+          <Heading fontSize={['small', 'medium', 'large']}>写文章</Heading>
+          <Button colorScheme="primary" onClick={handlePublish}>
+            发布
+          </Button>
+        </Header>
+      }
+    >
       <Center>
         <Box width="100%" maxWidth="1100px">
           <Input
@@ -50,9 +55,9 @@ export default function WritePost() {
             maxLength={50}
             size="lg"
           />
-          <Editor value={editorContent} onChange={handleChange} />
+          <Editor value={editorContent === '' ? undefined : editorContent} onChange={handleChange} />
         </Box>
       </Center>
-    </>
+    </Layout>
   );
 }

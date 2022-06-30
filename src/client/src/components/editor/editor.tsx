@@ -73,12 +73,11 @@ const initialConfig = {
 };
 
 interface EditorProps {
-  value: string;
+  value?: string;
   onChange: (editorState: EditorState, editor: LexicalEditor) => void;
 }
 
 const Editor: FC<EditorProps> = props => {
-  console.log(props.value);
   return (
     <LexicalComposer initialConfig={{ ...initialConfig, editorState: props.value }}>
       <EditorPropsContext.Provider value={props}>

@@ -1,5 +1,6 @@
 import { RoleEnum } from 'shared/constants/role.enum';
 import { ThemeEnum } from '../../constants/theme.enum';
+import { Socket } from 'socket.io-client';
 
 export interface BaseUserInfo {
   avatar?: string;
@@ -14,4 +15,6 @@ export interface BaseUserInfo {
   url: string;
   username: string;
   verified: boolean;
+  socket?: Socket;
+  socketId: string | null;
 }

@@ -26,6 +26,8 @@ export const getDefaultInitialState = (cookies = {} as any) => ({
   username: cookies.username || '',
   verified: cookies.verified ? JSON.parse(decodeURIComponent(cookies.verified)) : false,
   theme: (cookies.theme as ThemeEnum) || ThemeEnum.light,
+  socket: cookies.socket || null,
+  socketId: null,
 });
 
 const zustandContext = createContext<StoreApi<BearState>>();

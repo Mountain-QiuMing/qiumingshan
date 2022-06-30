@@ -4,7 +4,7 @@ import { CacheProvider, EmotionCache, Global, ThemeProvider } from '@emotion/rea
 import globalStyle from '@/style/global';
 import { theme } from '@/style/theme';
 import createEmotionCache from '@/utils/create-emotion-cache';
-import { getDefaultInitialState, StoreProvider, useCreateStore } from '../src/store';
+import { getDefaultInitialState, StoreProvider, useCreateStore } from '@/store';
 import { NextPage, NextPageContext } from 'next';
 import App from 'next/app';
 import { setCookies } from 'cookies-next';

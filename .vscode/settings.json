@@ -10,5 +10,5 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "cSpell.words": ["Excalidraw", "fieldname", "katex", "neteast", "Resizer", "typeahead"],
-  "typescript.preferences.importModuleSpecifier": "shortest"
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }
