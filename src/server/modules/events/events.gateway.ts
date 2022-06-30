@@ -13,7 +13,14 @@ import { UsePipes } from '@nestjs/common';
 import { ValidationPipe } from '@/core/pipe/validation.pipe';
 
 @UsePipes(new ValidationPipe({ isWs: true }))
-@WebSocketGateway()
+@WebSocketGateway({
+  path: '/socket',
+  allowEIO3: true,
+  cors: {
+    origin: /.*/,
+    credentials: true,
+  },
+})
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly eventsService: EventsService) {}
 
@@ -25,12 +32,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const query: any = socket.handshake.query;
 
     if (query.userId) {
-      const users = this.eventsService.addUser({
+      this.eventsService.addUser({
         socketId: socket.id,
         userId: query.userId,
       });
-
-      console.log(users);
     }
   }
 

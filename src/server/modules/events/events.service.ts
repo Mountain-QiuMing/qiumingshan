@@ -31,15 +31,11 @@ export class EventsService {
   }
 
   async publish(client: Socket, body: any) {
-    const queryBuilder = this.userRepository.createQueryBuilder('user');
-    const admin = await queryBuilder
-      .leftJoinAndSelect('user.roles', 'role')
-      .andWhere('role.code = :code', { code: RoleEnum.ADMIN })
-      .getOne();
-
+    const admin = await this.userRepository.findOneBy({
+      role: RoleEnum.ADMIN,
+    });
     if (admin) {
       const adminUser = this.users.find(item => item.userId === admin.id);
-
       if (adminUser) {
         client.to(adminUser.socketId).emit('audit', body);
       }

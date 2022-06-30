@@ -6,12 +6,15 @@ import { HttpExceptionFilter } from './core/filter/http-exception.filter';
 import { ValidationPipe } from './core/pipe/validation.pipe';
 import { AllExceptionsFilter } from './core/exception/all.exception';
 import { ConfigService } from '@nestjs/config';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Request, Response, NextFunction } from 'express';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ServerModule);
+  const app = await NestFactory.create(ServerModule, {
+    cors: true,
+  });
   const appConfig = app.get(ConfigService);
   const appName = appConfig.get('APP_NAME');
   const port = appConfig.get('APP_PORT');
@@ -22,7 +25,6 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Credentials', 'true'); // 允许客户端携带证书式访问。保持跨域请求中的Cookie。注意：此处设true时，Access-Control-Allow-Origin的值不能为 '*'
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.header('Access-control-max-age', '1000'); // 设置请求通过预检后多少时间内不再检验，减少预请求发送次数
     next();
   });
@@ -31,6 +33,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   const docConfig = new DocumentBuilder()
     .setTitle(appName)

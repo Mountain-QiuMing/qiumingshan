@@ -35,6 +35,7 @@ export class ValidationPipe implements PipeTransform<any> {
         error = error.children.shift();
       }
       Object.keys(error.constraints).forEach(key => {
+        console.log(error);
         if (this.isWs) {
           throw new WsException({
             status: false,
