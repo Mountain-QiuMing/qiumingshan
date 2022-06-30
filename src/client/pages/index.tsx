@@ -1,11 +1,16 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import Layout from '@/components/layout';
 import { apiGetPostList } from '@/api/post/publish-post';
 import { Heading } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { Post } from 'shared/interface/post/post.interface';
+import { PagerData } from 'shared/interface/common/pager';
 
-const IndexPage = props => {
+interface IndexPageProps {
+  posts: PagerData<Post[]>;
+}
+
+const IndexPage: NextPage<IndexPageProps> = props => {
   const router = useRouter();
 
   const handlePostDetail = (post: Post) => {
