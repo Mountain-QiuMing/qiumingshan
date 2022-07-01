@@ -13,7 +13,7 @@ interface BearState extends BaseUserInfo {
 
 export let store: UseBoundStore<StoreApi<BearState>>;
 
-export const getDefaultInitialState = (cookies = {} as any) => ({
+export const getDefaultInitialState = (cookies = {} as any): Partial<BearState> => ({
   avatar: cookies.avatar || '',
   createTime: cookies.createTime || '',
   id: cookies.id || '',
@@ -38,10 +38,10 @@ export const useStore = zustandContext.useStore;
 
 export const useStoreApi = zustandContext.useStoreApi;
 
-export const initializeStore = (preloadedState = {}) => {
+export const initializeStore = (preloadedState: BearState) => {
   return create<BearState>(set => ({
     ...merge(getDefaultInitialState(), preloadedState),
-    setUserInfo: (userInfo: Partial<BaseUserInfo>) => {
+    setUserInfo: userInfo => {
       set(userInfo);
     },
     clearUserInfo: () => {
@@ -50,7 +50,7 @@ export const initializeStore = (preloadedState = {}) => {
   }));
 };
 
-export function useCreateStore(serverInitialState: StoreApi<BearState>) {
+export function useCreateStore(serverInitialState: BearState) {
   if (typeof window === 'undefined') {
     return () => initializeStore(serverInitialState);
   }

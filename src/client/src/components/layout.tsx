@@ -47,6 +47,13 @@ const Layout: FC<LayoutProps> = ({ children, container, header }) => {
         console.log('文章待审核', e);
       });
     });
+
+    return () => {
+      socket.disconnect();
+      store.setUserInfo({
+        socket: undefined,
+      });
+    };
   }, []);
 
   return (
