@@ -4,6 +4,7 @@ import { color } from './color';
 import { component } from './component';
 import type { Theme as ChakraTheme } from '@chakra-ui/theme';
 import { style } from './style';
+import { semanticTokens } from './semantic-token';
 
 export const theme = extendTheme(
   {
@@ -11,6 +12,7 @@ export const theme = extendTheme(
     colors: color,
     components: component,
     styles: style,
+    semanticToken: semanticTokens,
   },
   withDefaultProps({
     defaultProps: {

@@ -70,6 +70,21 @@ export class UserService {
     return entity;
   }
 
+  /** 通过用户名获取用户信息 */
+  async getUserInfoByName(username: string, user: UserEntity) {
+    console.log(user);
+    const entity = await this.userRepository.findOne({
+      where: { username },
+      // select: email && ['email'],
+    });
+
+    if (!entity) {
+      throw new NotFoundException('用户不存在');
+    }
+
+    return entity;
+  }
+
   async updateUserInfoById(id: string, user: Partial<UserEntity>) {
     const entity = await this.userRepository.findOneBy({ id });
 

@@ -12,6 +12,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status: exception instanceof HttpException ? exception.getStatus() === HttpStatus.OK : false,
     };
 
+    console.log(exception);
+
     Logger.warn(AllExceptionsFilter.name);
     Logger.error(status, exception);
 

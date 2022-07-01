@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Request, Response, NextFunction } from 'express';
 import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
 import * as express from 'express';
 
 async function bootstrap() {
@@ -23,6 +24,7 @@ async function bootstrap() {
 
   app.use(publicFilePath, express.static(multerDest));
   app.use(cookieParser());
+  app.use(bodyParser.json());
   app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Credentials', 'true'); // 允许客户端携带证书式访问。保持跨域请求中的Cookie。注意：此处设true时，Access-Control-Allow-Origin的值不能为 '*'
     res.header('Access-control-max-age', '1000'); // 设置请求通过预检后多少时间内不再检验，减少预请求发送次数

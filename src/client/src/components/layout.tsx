@@ -29,7 +29,6 @@ const Layout: FC<LayoutProps> = ({ children, container, header }) => {
 
   useEffect(() => {
     const socket = io('ws://127.0.0.1:3002', {
-      path: '/socket',
       query: {
         userId: store.id,
       },

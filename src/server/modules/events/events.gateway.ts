@@ -14,7 +14,6 @@ import { ValidationPipe } from '@/core/pipe/validation.pipe';
 
 @UsePipes(new ValidationPipe({ isWs: true }))
 @WebSocketGateway({
-  path: '/socket',
   allowEIO3: true,
   cors: {
     origin: /.*/,

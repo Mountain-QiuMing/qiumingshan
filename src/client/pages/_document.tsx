@@ -37,7 +37,7 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <link rel="shortcut icon" href="/_next/image?url=%2Ffavicon.ico&w=96&q=75" />
+          {/* <link rel="shortcut icon" href="/_next/image?url=%2Ffavicon.ico&w=96&q=75" /> */}
           {(this.props as any).emotionStyleTags}
         </Head>
         <body>

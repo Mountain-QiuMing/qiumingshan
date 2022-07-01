@@ -43,13 +43,14 @@ axiosInstance.interceptors.response.use(
         result: null,
       };
     }
+
     // history.replace('/login');
     let errorMessage = '系统异常';
 
     if (error?.message?.includes('Network Error')) {
       errorMessage = '网络错误，请检查您的网络';
     } else {
-      errorMessage = error.message || error.response.data?.message;
+      errorMessage = error.message || error?.response.data?.message;
     }
     toast.error(errorMessage);
     error.message && console.error(errorMessage);
