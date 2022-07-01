@@ -19,8 +19,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { getCookie, getCookies, removeCookies } from 'cookies-next';
 import ThemeSwitch from './theme-switch';
-import { apiUpdateUserInfo } from '../api/user/user-info';
-import { ThemeEnum } from 'shared/constants/theme.enum';
 import { useStore } from '../store';
 import HeaderNavLink from './header-nav-link';
 
@@ -51,16 +49,6 @@ const Header: FC<HeaderProps> = props => {
       removeCookies(key);
     }
     store.clearUserInfo();
-  };
-
-  const handleThemeChange = (nextTheme: ThemeEnum) => {
-    store.setUserInfo({
-      theme: nextTheme,
-    });
-    store.token &&
-      apiUpdateUserInfo({
-        theme: nextTheme,
-      });
   };
 
   return (
@@ -98,7 +86,7 @@ const Header: FC<HeaderProps> = props => {
       </Box>
 
       <Box display="flex" alignItems="center" userSelect="none">
-        <ThemeSwitch mr={4} onChange={handleThemeChange} />
+        <ThemeSwitch mr={4} />
         {store.token ? (
           <Menu>
             <MenuButton>

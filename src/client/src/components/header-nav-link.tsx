@@ -2,7 +2,11 @@ import { HTMLChakraProps, chakra, useColorModeValue } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-function HeaderNavLink(props: HTMLChakraProps<'a'>) {
+interface HeaderNavLinkProps extends Omit<HTMLChakraProps<'a'>, 'href'> {
+  href: string;
+}
+
+function HeaderNavLink(props: HeaderNavLinkProps) {
   const { href, ...rest } = props;
   const { pathname } = useRouter();
 
@@ -15,7 +19,7 @@ function HeaderNavLink(props: HTMLChakraProps<'a'>) {
         aria-current={isActive ? 'page' : undefined}
         display="block"
         py="1"
-        px={[1, 1.5, 2, 2.5, , 3]}
+        px={[1, 1.5, 2, 2.5, 3]}
         borderRadius="full"
         transition="all 0.3s"
         color={useColorModeValue('gray.600', 'whiteAlpha.800')}

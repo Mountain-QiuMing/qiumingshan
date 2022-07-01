@@ -1,28 +1,37 @@
-import { css } from '@emotion/react';
-import { Box, ChakraComponent, useBreakpointValue, useColorMode } from '@chakra-ui/react';
-import { SunLineIcon, MoonLineIcon } from 'ultra-icon';
-import { omit } from 'lodash-es';
+import { useColorMode, IconButton, ChakraComponent } from '@chakra-ui/react';
+import { SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { apiUpdateUserInfo } from '../api/user/user-info';
+import { useStore } from '../store';
 import { ThemeEnum } from 'shared/constants/theme.enum';
+import { css } from '@emotion/react';
+import { omit } from 'lodash-es';
 
-interface ThemeSwitchProps {
-  onChange?: (nextTheme: ThemeEnum) => void;
-}
+const ThemeSwitch: ChakraComponent<'span'> = props => {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+  const store = useStore();
 
-const ThemeSwitch: ChakraComponent<'span', ThemeSwitchProps> = props => {
-  const { onChange } = props;
-  const { toggleColorMode, colorMode } = useColorMode();
-  const iconSize = useBreakpointValue([18, 24]);
-
-  const handleSwitchTheme = async () => {
-    const nextTheme = colorMode === ThemeEnum.DARK ? ThemeEnum.light : ThemeEnum.DARK;
+  const onChange = () => {
     toggleColorMode();
-    onChange?.(nextTheme);
+    const nextTheme = isDark ? ThemeEnum.light : ThemeEnum.DARK;
+    store.setUserInfo({
+      theme: nextTheme,
+    });
+    store.token &&
+      apiUpdateUserInfo({
+        theme: nextTheme,
+      });
   };
 
   return (
-    <Box as="span" onClick={handleSwitchTheme} css={themeSwitchStyle} {...omit(props, 'as')}>
-      {colorMode === 'dark' ? <SunLineIcon size={iconSize} /> : <MoonLineIcon size={iconSize} />}
-    </Box>
+    <IconButton
+      css={themeSwitchStyle}
+      icon={isDark ? <SunIcon /> : <MoonIcon />}
+      aria-label="切换主题"
+      onClick={onChange}
+      bg="transparent"
+      {...omit(props, 'as')}
+    />
   );
 };
 
