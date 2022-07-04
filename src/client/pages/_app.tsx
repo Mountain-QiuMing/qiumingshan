@@ -7,7 +7,7 @@ import createEmotionCache from '@/utils/create-emotion-cache';
 import { getDefaultInitialState, StoreProvider, useCreateStore } from '@/store';
 import { NextPage, NextPageContext } from 'next';
 import App from 'next/app';
-import { setCookies } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -44,7 +44,7 @@ MyApp.getInitialProps = async (context: any) => {
   const cookies = context.ctx.req?.cookies || {};
 
   for (const key in cookies) {
-    setCookies(key, cookies[key], { req, res });
+    setCookie(key, cookies[key], { req, res });
   }
 
   return {

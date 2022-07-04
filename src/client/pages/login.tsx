@@ -5,7 +5,7 @@ import Bg from '@/assets/images/bg.webp';
 import { apiLogin } from '@/api/user/login.api';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-import { setCookies } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 import { useStore } from '../src/store';
 import { Login } from 'shared/interface/user/login.interface';
 import ThemeSwitch from '../src/components/theme-switch';
@@ -30,7 +30,7 @@ export default () => {
       setUserInfo(res.result);
       for (const key in res.result) {
         const k = key as keyof typeof res.result;
-        setCookies(k, res.result[k]);
+        setCookie(k, res.result[k]);
       }
       router.replace('/');
     }
