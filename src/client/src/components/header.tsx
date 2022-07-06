@@ -40,7 +40,7 @@ const Header: FC<HeaderProps> = props => {
 
   const showUserInfo = () => {
     const username = getCookie('username');
-    router.push(`/user/${username}`);
+    router.push(`/${username}`);
   };
 
   const handleLogout = () => {
