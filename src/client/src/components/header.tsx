@@ -52,7 +52,7 @@ const Header: FC<HeaderProps> = props => {
   };
 
   return (
-    <Box height={[16, 20]} px={[4, 5, 20]} css={headerStyle}>
+    <Box height={[16, 20]} px={[4, 5, 20]} css={headerStyle} bg="black.800">
       <Link href="/">
         <div className="logo">
           <Hide below="sm">

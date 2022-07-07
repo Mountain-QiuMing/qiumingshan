@@ -14,6 +14,7 @@ export interface BaseUserInfo {
   updateTime: string;
   url: string;
   username: string;
+  description?: string;
   verified: boolean;
   socket?: Socket;
   socketId: string | null;

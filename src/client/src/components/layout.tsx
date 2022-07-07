@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, Container } from '@chakra-ui/react';
+import { Alert, AlertIcon, Box, Button, Container } from '@chakra-ui/react';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { apiSendVerifyEmail } from '../api/user/verify-email.api';
 import { toast } from '@/utils/toast';
@@ -56,7 +56,7 @@ const Layout: FC<LayoutProps> = ({ children, container, header }) => {
   }, []);
 
   return (
-    <div>
+    <Box>
       {store.token && !store.verified && (
         <Alert status="warning">
           <AlertIcon />
@@ -69,8 +69,8 @@ const Layout: FC<LayoutProps> = ({ children, container, header }) => {
         </Alert>
       )}
       {header || <Header />}
-      {container ? <Container>{children}</Container> : children}
-    </div>
+      {container ? <Container py={4}>{children}</Container> : children}
+    </Box>
   );
 };
 

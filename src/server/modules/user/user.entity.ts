@@ -32,6 +32,9 @@ export class UserEntity {
   @Column({ nullable: true, length: 30, comment: '昵称' })
   public nickname: string;
 
+  @Column({ length: 50, comment: '简介' })
+  public description: string;
+
   @Column({ length: 200, comment: '用户主页' })
   public url: string;
 

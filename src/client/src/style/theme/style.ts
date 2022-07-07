@@ -57,5 +57,18 @@ export const style = {
         'var(--ck-colors-whiteAlpha-900)',
       )(props),
     },
+    body: {
+      fontFamily: 'body',
+      color: mode('black.900', 'whiteAlpha.900')(props),
+      bg: mode('white', 'black.900')(props),
+      lineHeight: 'base',
+    },
+    '*::placeholder': {
+      color: mode('black.400', 'whiteAlpha.400')(props),
+    },
+    '*, *::before, &::after': {
+      borderColor: mode('black.200', 'whiteAlpha.300')(props),
+      wordWrap: 'break-word',
+    },
   }),
 };
