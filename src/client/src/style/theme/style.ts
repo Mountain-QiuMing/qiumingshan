@@ -1,7 +1,7 @@
-import { mode } from '@chakra-ui/theme-tools';
+import { mode, StyleFunctionProps } from '@chakra-ui/theme-tools';
 
 export const style = {
-  global: props => ({
+  global: (props: StyleFunctionProps) => ({
     ':root': {
       '--user-text-reverseColor': mode('var(--ck-colors-whiteAlpha-900)', 'var(--ck-colors-gray-800)')(props),
       '--user-bg-color': mode('var(--ck-colors-white)', 'var(--ck-colors-black)')(props),
@@ -58,16 +58,14 @@ export const style = {
       )(props),
     },
     body: {
-      fontFamily: 'body',
       color: mode('black.900', 'whiteAlpha.900')(props),
       bg: mode('white', 'black.900')(props),
-      lineHeight: 'base',
     },
     '*::placeholder': {
-      color: mode('black.400', 'whiteAlpha.400')(props),
+      color: mode('grey.400', 'whiteAlpha.400')(props),
     },
     '*, *::before, &::after': {
-      borderColor: mode('black.200', 'whiteAlpha.300')(props),
+      borderColor: mode('grey.200', 'whiteAlpha.300')(props),
       wordWrap: 'break-word',
     },
   }),

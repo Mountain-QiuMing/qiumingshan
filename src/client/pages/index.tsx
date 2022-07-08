@@ -1,29 +1,20 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Layout from '@/components/layout';
 import { apiGetPostList } from '@/api/post/publish-post';
-import { Heading } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import { Post } from 'shared/interface/post/post.interface';
 import { PagerData } from 'shared/interface/common/pager';
+import PostItem from '../src/components/post-item';
 
 interface IndexPageProps {
   posts: PagerData<Post[]>;
 }
 
 const IndexPage: NextPage<IndexPageProps> = props => {
-  const router = useRouter();
-
-  const handlePostDetail = (post: Post) => {
-    router.push(`/p/${post.id}`);
-  };
   return (
     <Layout title="Home | Next.js + TypeScript Example">
-      <Heading>文章列表</Heading>
       <ul>
         {props.posts.data?.map((post, index) => (
-          <li key={index} onClick={() => handlePostDetail(post)}>
-            <h3>{post.title}</h3>
-          </li>
+          <PostItem post={post} key={index} />
         ))}
       </ul>
     </Layout>

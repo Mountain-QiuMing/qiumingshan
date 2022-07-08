@@ -27,7 +27,9 @@ export interface Post {
   title: string;
   body: string;
   tags: Tag[];
-  created: Date;
-  updated: Date;
+  created: string;
+  updated: string;
   user: BaseUserInfo;
 }
+
+export type PostItem = Omit<Post, 'body' | 'tags' | 'created'>;

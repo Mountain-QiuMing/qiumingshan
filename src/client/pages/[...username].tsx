@@ -1,9 +1,10 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Layout from '@/components/layout';
 import { BaseUserInfo } from 'shared/interface/user/user-info.interface';
-import { Avatar, Box, Flex, Heading, Text } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Heading, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { apiGetUserInfoByName } from '../src/api/user/user-info';
 import { useRouter } from 'next/router';
+import dateUtil from '../src/utils/date';
 
 interface IndexPageProps {
   user: BaseUserInfo;
@@ -27,10 +28,27 @@ const IndexPage: NextPage<IndexPageProps> = props => {
             </Text>
           </Box>
         </Flex>
-        <Text>注册时间：{user.createTime}</Text>
+        <Text fontSize="sm">注册时间：{dateUtil(user.createTime).format('YYYY-MM-DD')}</Text>
         {user.description && <Text ml={2}>@{user.description}</Text>}
       </Flex>
-      {props.user.role}
+      <Tabs isLazy mt={4}>
+        <TabList>
+          <Tab>文章</Tab>
+          <Tab>提问</Tab>
+          <Tab>回答</Tab>
+          <Tab>评论</Tab>
+          <Tab>点赞</Tab>
+          <Tab>收藏</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>文章</TabPanel>
+          <TabPanel>提问</TabPanel>
+          <TabPanel>回答</TabPanel>
+          <TabPanel>评论</TabPanel>
+          <TabPanel>点赞</TabPanel>
+          <TabPanel>收藏</TabPanel>
+        </TabPanels>
+      </Tabs>
     </Layout>
   );
 };
