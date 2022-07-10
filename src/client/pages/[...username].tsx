@@ -55,7 +55,7 @@ const IndexPage: NextPage<IndexPageProps> = props => {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const username = query.username[0];
-  if (!username || username.includes('.')) {
+  if (!username || username.includes('.') || username.includes('__nextjs_')) {
     return {
       redirect: {
         destination: '/',

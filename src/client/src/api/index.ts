@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   config => {
-    if (config?.data?.message) {
+    if (config.data?.message) {
       toast.warning(config.data.message);
     }
 
@@ -53,7 +53,8 @@ axiosInstance.interceptors.response.use(
       errorMessage = error.message || error?.response.data?.message;
     }
     toast.error(errorMessage);
-    error.message && console.error(errorMessage);
+    error.message && console.error('error: ', errorMessage);
+    console.log(error);
 
     return {
       status: false,

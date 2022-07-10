@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity as Post } from './post.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { UserEntity } from '../user/user.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Tag } from '../tag/tag.entity';
 import { ListOptionsInterface } from '../../core/decorator/list-options.decorator';
+import { ApiException } from '../../core/exception/api.exception';
 
 @Injectable()
 export class PostService {
@@ -72,7 +73,12 @@ export class PostService {
     if (postId) {
       queryBuilder.andWhereInIds([postId]);
 
-      return queryBuilder.getOne();
+      const entity = await queryBuilder.getOne();
+      if (!entity) {
+        throw new ApiException('文章不存在', HttpStatus.NOT_FOUND);
+      }
+
+      return entity;
     }
 
     if (tagIds) {

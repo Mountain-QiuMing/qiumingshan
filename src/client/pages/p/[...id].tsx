@@ -3,7 +3,8 @@ import Layout from '@/components/layout';
 import { Heading } from '@chakra-ui/react';
 import { GetServerSideProps, NextPage } from 'next';
 import { Post, Tag } from 'shared/interface/post/post.interface';
-import Editor from '@/components/editor';
+import Comment from '@/components/comment';
+// import Editor from '@/components/editor';
 
 interface HomeProps {
   post: Post;
@@ -12,22 +13,25 @@ interface HomeProps {
 const Home: NextPage<HomeProps> = props => {
   const { post, tagList } = props;
 
-  if (typeof document === 'undefined') return null;
-
   return (
     <Layout>
       <Heading fontSize="3xl">{post.title}</Heading>
 
-      <div className="main">
-        <Editor value={JSON.parse(post.body)} onChange={() => {}} />
-      </div>
+      <div className="main">{/* <Editor value={JSON.parse(post.body)} onChange={() => {}} /> */}</div>
+      <Comment />
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const id = params.id as string;
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const id = query.id[0];
   const { status, result } = await apiGetPostById(id);
+
+  if (!result) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {

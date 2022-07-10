@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { PostEntity } from '../post/post.entity';
 import { RoleEnum } from 'shared/constants/role.enum';
 import { ThemeEnum } from 'shared/constants/theme.enum';
+import { Comment } from '../comment/comment.entity';
 
 @Entity({ name: 'user' })
 @Unique(['email', 'username'])
@@ -61,6 +62,9 @@ export class UserEntity {
 
   @Column({ type: 'enum', enum: RoleEnum, default: RoleEnum.USER })
   role: RoleEnum;
+
+  @OneToMany(() => Comment, comment => comment.user)
+  comments: Comment[];
 
   @BeforeInsert()
   async setUrl() {

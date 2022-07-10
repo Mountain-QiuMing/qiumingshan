@@ -15,7 +15,7 @@ const PostItem: ComponentWithAs<'div', PostItemProps> = props => {
   const router = useRouter();
 
   const handlePostDetail = () => {
-    router.push(`/p/${props.id}`);
+    router.push(`/p/${post.id}`);
   };
   return (
     <Box>
@@ -28,7 +28,14 @@ const PostItem: ComponentWithAs<'div', PostItemProps> = props => {
         </Box>
         <Text fontSize="sm">{dateUtil().to(dateUtil(post.updated))}</Text>
       </Flex>
-      <Heading fontSize="xl" my={4} onClick={handlePostDetail} overflow="hidden" textOverflow="ellipsis">
+      <Heading
+        fontSize="xl"
+        my={4}
+        onClick={handlePostDetail}
+        cursor="pointer"
+        overflow="hidden"
+        textOverflow="ellipsis"
+      >
         {post.title}
       </Heading>
       <Flex gap={10} justifyContent="space-between">

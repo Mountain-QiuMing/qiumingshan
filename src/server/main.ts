@@ -4,7 +4,7 @@ import { ServerModule } from './server.module';
 import { TransformInterceptor } from './core/intercepter/transform.intercepter';
 import { HttpExceptionFilter } from './core/filter/http-exception.filter';
 import { ValidationPipe } from './core/pipe/validation.pipe';
-import { AllExceptionsFilter } from './core/exception/all.exception';
+// import { AllExceptionsFilter } from './core/exception/all.exception';
 import { ConfigService } from '@nestjs/config';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Request, Response, NextFunction } from 'express';
@@ -34,7 +34,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter());
 
   app.useWebSocketAdapter(new IoAdapter(app));
 

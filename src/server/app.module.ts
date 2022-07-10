@@ -8,11 +8,9 @@ import { PostModule } from './modules/post/post.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PostEntity } from './modules/post/post.entity';
-import { UserEntity } from './modules/user/user.entity';
 import { TagModule } from './modules/tag/tag.module';
-import { Tag } from '@/modules/tag/tag.entity';
 import { EventsModule } from './modules/events/events.module';
+import { ReactionModule } from './modules/reaction/reaction.module';
 
 @Module({
   imports: [
@@ -29,7 +27,7 @@ import { EventsModule } from './modules/events/events.module';
           username: configService.get('MYSQL_USERNAME'),
           password: configService.get('MYSQL_PASSWORD'),
           database: configService.get('MYSQL_DATABASE'),
-          entities: [PostEntity, UserEntity, Tag],
+          entities: ['dist/server/**/*.entity{.ts,.js}'],
           autoLoadEntities: true,
           // migrations: ['src/**/*.ts'],
           synchronize: true,
@@ -72,6 +70,7 @@ import { EventsModule } from './modules/events/events.module';
     AuthModule,
     TagModule,
     EventsModule,
+    ReactionModule,
   ],
 })
 export class AppModule {}
