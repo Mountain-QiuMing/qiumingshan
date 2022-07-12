@@ -40,6 +40,7 @@ const CommentItem: ComponentWithAs<'div', CommentItemProps> = props => {
 
         {commentEditorVisible && (
           <CommentEditor
+            commentId={comment.id}
             postId={comment.postId}
             visible={commentEditorVisible}
             onVisibleChange={setCommentEditorVisible}

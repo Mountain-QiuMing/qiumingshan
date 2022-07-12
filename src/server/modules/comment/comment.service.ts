@@ -18,11 +18,8 @@ export class CommentService {
   async get(postId: string) {
     const queryBuilder = this.commentRepository
       .createQueryBuilder('comment')
-      .where('comment.post.id = :postId', { postId })
-      .select(['comment'])
-      .leftJoin('comment.post', 'post')
-      .addSelect('comment.post.id', 'postId')
-      .leftJoinAndSelect('comment.user', 'user');
+      .leftJoinAndSelect('comment.user', 'user')
+      .where('comment.postId = :postId', { postId });
     return await queryBuilder.getMany();
   }
 
@@ -33,7 +30,7 @@ export class CommentService {
     }
     const comment = this.commentRepository.create({
       content,
-      post,
+      postId,
       user,
     });
 
