@@ -62,10 +62,10 @@ export const style = {
       bg: mode('white', 'black.900')(props),
     },
     '*::placeholder': {
-      color: mode('grey.400', 'whiteAlpha.400')(props),
+      color: mode('gray.400', 'whiteAlpha.400')(props),
     },
     '*, *::before, &::after': {
-      borderColor: mode('grey.200', 'whiteAlpha.300')(props),
+      borderColor: mode('gray.200', 'whiteAlpha.300')(props),
       wordWrap: 'break-word',
     },
   }),

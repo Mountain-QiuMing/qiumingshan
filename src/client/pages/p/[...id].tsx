@@ -3,9 +3,9 @@ import Layout from '@/components/layout';
 import { Heading } from '@chakra-ui/react';
 import { GetServerSideProps, NextPage } from 'next';
 import { Post, Tag } from 'shared/interface/post/post.interface';
-import Comment from '@/components/comment';
+import dynamic from 'next/dynamic';
 // import Editor from '@/components/editor';
-
+const Comment = dynamic(() => import('@/components/comment'), { ssr: false });
 interface HomeProps {
   post: Post;
   tagList: Tag[];
@@ -18,7 +18,7 @@ const Home: NextPage<HomeProps> = props => {
       <Heading fontSize="3xl">{post.title}</Heading>
 
       <div className="main">{/* <Editor value={JSON.parse(post.body)} onChange={() => {}} /> */}</div>
-      <Comment />
+      <Comment postId={post.id} />
     </Layout>
   );
 };

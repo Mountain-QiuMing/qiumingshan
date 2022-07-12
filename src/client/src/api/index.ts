@@ -54,7 +54,6 @@ axiosInstance.interceptors.response.use(
     }
     toast.error(errorMessage);
     error.message && console.error('error: ', errorMessage);
-    console.log(error);
 
     return {
       status: false,

@@ -4,14 +4,15 @@ import CommentItem from './comment.item';
 
 interface CommentListProps extends FlexProps {
   comments: CommentData[];
+  onSubmit: () => void;
 }
 
 const CommentList: ComponentWithAs<'div', CommentListProps> = props => {
-  const { comments, ...rest } = props;
+  const { comments, onSubmit, ...rest } = props;
   return (
     <Flex {...rest}>
       {comments.map(comment => (
-        <CommentItem comment={comment} />
+        <CommentItem onSubmit={onSubmit} width="100%" key={comment.id} comment={comment} />
       ))}
     </Flex>
   );

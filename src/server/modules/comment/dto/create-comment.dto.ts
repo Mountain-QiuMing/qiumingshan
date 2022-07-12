@@ -7,6 +7,5 @@ export class CreateCommentDto {
   @IsNotEmpty({ message: '文章 id 不能为空哦' })
   postId: string;
 
-  @IsNotEmpty({ message: '文章 id 不能为空哦' })
-  commentId: string;
+  commentId?: string;
 }

@@ -1,9 +1,8 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Layout from '@/components/layout';
 import { BaseUserInfo } from 'shared/interface/user/user-info.interface';
-import { Avatar, Box, Flex, Heading, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import { apiGetUserInfoByName } from '../src/api/user/user-info';
-import { useRouter } from 'next/router';
 import dateUtil from '../src/utils/date';
 
 interface IndexPageProps {
@@ -53,18 +52,18 @@ const IndexPage: NextPage<IndexPageProps> = props => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const username = query.username[0];
-  if (!username || username.includes('.') || username.includes('__nextjs_')) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  if (!(params && params.username && Array.isArray(params.username)))
+    throw Error('getServerSideProps: wrong parameters.');
+  const [username] = params.username.reverse();
 
   const res = await apiGetUserInfoByName(username);
+
+  if (!res.status || !res.result) {
+    return {
+      notFound: true,
+    };
+  }
 
   return { props: { user: res.result || {} } };
 };

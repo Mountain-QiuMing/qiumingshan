@@ -11,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TagModule } from './modules/tag/tag.module';
 import { EventsModule } from './modules/events/events.module';
 import { ReactionModule } from './modules/reaction/reaction.module';
+import { CommentModule } from './modules/comment/comment.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { ReactionModule } from './modules/reaction/reaction.module';
     TagModule,
     EventsModule,
     ReactionModule,
+    CommentModule,
   ],
 })
 export class AppModule {}

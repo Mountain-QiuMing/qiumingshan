@@ -4,8 +4,15 @@ export interface CommentData {
   id: string;
   postId: string;
   user: BaseUserInfo;
-  commentId: string;
+  commentId?: string;
   content: string;
-  parent: Comment;
-  children: Comment[];
+  parent: CommentData;
+  children: CommentData[];
+  createdAt: string;
+}
+
+export interface AddCommentParams {
+  postId: string;
+  commentId?: string;
+  content: string;
 }
